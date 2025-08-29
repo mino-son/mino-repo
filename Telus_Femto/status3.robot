@@ -29,11 +29,12 @@ SSH Then Run Commands (with validation)
 
     # OAM 진입
     Write    idm oam; echo __OAM__
-    Read Until    __OAM__
+    Read Until    __OAM__          # 에코 라인까지 포함해도 무방 (검증 안함)
 
-    # status 실행 → 출력 캡처(마커까지)
+    # status 실행 → 에코 라인 먼저 소비, 그 다음 실제 출력 캡처
     Write    status; echo __STAT_END__
-    ${output}=    Read Until    __STAT_END__
+    Read Until    __STAT_END__     # 1차: 에코된 커맨드 줄 소비 (변수에 담지 않음)
+    ${output}=    Read Until    __STAT_END__     # 2차: 실제 결과 캡처
     Log To Console    ${output}
 
     # 방어적 체크(선택)
