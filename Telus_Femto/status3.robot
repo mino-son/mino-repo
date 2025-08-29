@@ -28,15 +28,14 @@ SSH Then Run Commands (with validation)
     Read Until    __ROOT__
 
     # OAM 진입
-    Write    idm oam; echo __OAM__
-    Read Until    __OAM__          # 에코 라인까지 포함해도 무방 (검증 안함)
+    Write    idm oam
+    Read Until Regexp    (?m)/>.*$      # OAM 프롬프트가 나타날 때까지 대기 (색상 ANSI 허용)
 
-    # status 실행 → 에코 라인 먼저 소비, 그 다음 실제 출력 캡처
-    Write    status; echo __STAT_END__
-    Read Until    __STAT_END__     # 1차: 에코된 커맨드 줄 소비 (변수에 담지 않음)
-    ${output}=    Read Until    __STAT_END__     # 2차: 실제 결과 캡처
+    # status 실행 → 프롬프트가 다시 나타날 때까지 전체 출력 캡처
+    Write    status
+    ${output}=    Read Until Regexp    (?m)/>.*$     # 마지막 줄의 '/>'(+ANSI 등)까지 포함
+
     Log To Console    ${output}
-
     # 방어적 체크(선택)
     Should Not Contain    ${output}    not found
     Should Not Contain    ${output}    error
