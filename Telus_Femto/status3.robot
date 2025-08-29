@@ -19,20 +19,20 @@ SSH Then Run Commands (with validation)
     Sleep    3s
 
     # 로그인 동기화
-    Write    echo __READY__
-    Read Until    __READY__
+    Write           echo __READY__
+    Read Until      __READY__
 
     # 2) su 전환
-    Write    su -
-    Read Until    assword:
-    Write    ${ROOT_PASS}
-    Sleep    3s
-    Write    echo __ROOT__
-    Read Until    __ROOT__
+    Write           su -
+    Read Until      assword:
+    Write           ${ROOT_PASS}
+    Sleep           3s
+    Write           echo __ROOT__
+    Read Until      __ROOT__
 
     # 3) OAM 진입
-    Write    idm oam; echo __OAM__
-    Read Until    __OAM__
+    Write           idm oam; echo __OAM__
+    Read Until      __OAM__
 
     # 4) status 실행 → 출력 캡처(마커까지)
     Write    status; echo __STAT_END__
