@@ -11,31 +11,25 @@ ${TIMEOUT}    30s
 
 *** Test Cases ***
 SSH Then Run Commands (with sleep)
-    # 1) SSH 로그인
     Open Connection    ${HOST}    port=${PORT}    timeout=${TIMEOUT}
-    Sleep              3s
     Login              ${USER}    ${PASS}
     Sleep              3s
 
     Write              echo __READY__
-    Read Until         __READY__    timeout=${TIMEOUT}
+    Read Until         __READY__    ${TIMEOUT}
 
-    # 2) su로 루트 전환
     Write              su -
-    3s
-    Read Until         assword:     timeout=${TIMEOUT}
+    Read Until         assword:    ${TIMEOUT}
     Write              ${ROOT_PASS}
     Sleep              3s
 
     Write              echo __ROOT__
-    Read Until         __ROOT__     timeout=${TIMEOUT}
+    Read Until         __ROOT__     ${TIMEOUT}
 
-    # 3) idm oam 실행
     Write              idm oam; echo __DONE1__
-    Read Until         __DONE1__    timeout=${TIMEOUT}
+    Read Until         __DONE1__    ${TIMEOUT}
 
-    # 4) status 실행
     Write              status; echo __DONE2__
-    Read Until         __DONE2__    timeout=${TIMEOUT}
+    Read Until         __DONE2__    ${TIMEOUT}
 
     Close All Connections
