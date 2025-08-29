@@ -11,13 +11,14 @@ ${PORT}       22
 ${TIMEOUT}    30s
 
 *** Test Cases ***
-SSH Then Run Commands (with validation)
-    # 1) SSH 로그인
+SSH Then Run Commands (with sleep)
+    # 1) SSH 로그인 & 기본 읽기 타임아웃 설정
     Open Connection    ${HOST}    port=${PORT}    timeout=${TIMEOUT}
     Login              ${USER}    ${PASS}
     Set Client Configuration    timeout=${TIMEOUT}
     Sleep              3s
 
+    # 로그인 동기화
     Write              echo __READY__
     Read Until         __READY__
 
@@ -29,9 +30,14 @@ SSH Then Run Commands (with validation)
     Write              echo __ROOT__
     Read Until         __ROOT__
 
-    # 3) status 실행 (출력 캡처)
-    Write              status
-    ${output}=         Read Until    OAM TUL-LTEAO-5.3.5 />    ${TIMEOUT}
+    # 3) 명령 실행
+    Write              idm oam; echo __DONE1__
+    Read Until         __DONE1__
+
+    Write              status; echo __DONE2__
+    Read Until         __DONE2__
+
+    ${output}=         Read Until Regexp    OAM TUL-LTEAO-.*\s*>    ${TIMEOUT}
     Log To Console     ${output}
 
     # 4) PASS/FAIL 조건 확인
