@@ -7,18 +7,19 @@ ${USER}       tultefc
 ${PASS}       *eksvkxQkd#!
 ${ROOT_PASS}  *Tkfrnrtn#!
 ${PORT}       22
-${TIMEOUT}    15s
-${PROMPT_RE}  [#$]\s*$     # 사용자($)/루트(#) 프롬프트 매칭
+${TIMEOUT}    30s
+# 프롬프트: 줄 끝의 # 또는 $ (공백 허용). \s 는 이스케이프 보존 위해 \\s 사용 권장
+${PROMPT_RE}  (?m)[#$]\\s*$
 
 *** Test Cases ***
 SSH Then Run Commands
     Open Connection    ${HOST}    port=${PORT}    timeout=${TIMEOUT}
     Login              ${USER}    ${PASS}
 
-    # 초기 프롬프트까지 읽어 비워두기
+    # 로그인 배너 비우고 첫 프롬프트 대기
     Read Until Regexp  ${PROMPT_RE}    timeout=${TIMEOUT}
 
-    # su 승격
+    # 루트 승격
     Write              su -
     Read Until Regexp  (?i)password:   timeout=${TIMEOUT}
     Write              ${ROOT_PASS}
