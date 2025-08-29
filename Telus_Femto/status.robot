@@ -7,7 +7,7 @@ ${USER}       tultefc
 ${PASS}       *eksvkxQkd#!
 ${ROOT_PASS}  *Tkfrnrtn#!
 ${PORT}       22
-${TIMEOUT}    30s
+${TIMEOUT}    15s
 
 *** Test Cases ***
 SSH Then Run Commands (with sleep)
