@@ -1,0 +1,24 @@
+*** Settings ***
+Library    SSHLibrary
+
+*** Variables ***
+${PORT}        22
+${TIMEOUT}     15s
+${PROMPT}      
+
+*** Keywords ***
+Connect And Login
+    [Arguments]    ${HOST}    ${USER}    ${PASS}    ${PORT}=${PORT}    ${TIMEOUT}=${TIMEOUT}    ${PROMPT}=${PROMPT}
+    Open Connection           ${HOST}    port=${PORT}    timeout=${TIMEOUT}
+    Login                     ${USER}    ${PASS}
+    Run Keyword If    '${PROMPT}'!=''    Set Client Configuration    prompt=${PROMPT}    timeout=${TIMEOUT}
+    Read Until Prompt    timeout=${TIMEOUT}
+
+Open Shell And Run
+    [Arguments]    ${CMD}
+    Write      ${CMD}
+    ${out}=    Read Until Prompt    timeout=${TIMEOUT}
+    [Return]   ${out}
+
+Close SSH
+    Close All Connections
