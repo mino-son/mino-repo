@@ -8,28 +8,34 @@ ${PASS}       *eksvkxQkd#!
 ${ROOT_PASS}  *Tkfrnrtn#!
 ${PORT}       22
 ${TIMEOUT}    30s
-# 프롬프트: 줄 끝의 # 또는 $ (공백 허용). \s 는 이스케이프 보존 위해 \\s 사용 권장
-${PROMPT_RE}  (?m)[#$]\\s*$
 
 *** Test Cases ***
-SSH Then Run Commands
+SSH Then Run Commands (with sleep)
+    # 1) SSH 로그인
     Open Connection    ${HOST}    port=${PORT}    timeout=${TIMEOUT}
+    Sleep              3s
     Login              ${USER}    ${PASS}
+    Sleep              3s
 
-    # 로그인 배너 비우고 첫 프롬프트 대기
-    Read Until Regexp  ${PROMPT_RE}    timeout=${TIMEOUT}
+    Write              echo __READY__
+    Read Until         __READY__    timeout=${TIMEOUT}
 
-    # 루트 승격
+    # 2) su로 루트 전환
     Write              su -
-    Read Until Regexp  (?i)password:   timeout=${TIMEOUT}
+    3s
+    Read Until         assword:     timeout=${TIMEOUT}
     Write              ${ROOT_PASS}
-    Read Until Regexp  ${PROMPT_RE}    timeout=${TIMEOUT}
+    Sleep              3s
 
-    # 명령 실행
-    Write              idm oam
-    Read Until Regexp  ${PROMPT_RE}    timeout=${TIMEOUT}
+    Write              echo __ROOT__
+    Read Until         __ROOT__     timeout=${TIMEOUT}
 
-    Write              status
-    Read Until Regexp  ${PROMPT_RE}    timeout=${TIMEOUT}
+    # 3) idm oam 실행
+    Write              idm oam; echo __DONE1__
+    Read Until         __DONE1__    timeout=${TIMEOUT}
+
+    # 4) status 실행
+    Write              status; echo __DONE2__
+    Read Until         __DONE2__    timeout=${TIMEOUT}
 
     Close All Connections
