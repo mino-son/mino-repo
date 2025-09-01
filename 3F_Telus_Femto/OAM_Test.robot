@@ -43,12 +43,11 @@ Open Connection And Log In LTE
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     Write    idm oam -x status
-    ${output}=    Execute Command    idm oam -x status
-    Log    ${output}
-    Should Match Regexp    ${output}    (?ms).*^\s*Started:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*StackRunning:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*Availability:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*OpState:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*AdminState:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*RFTxStatus:\s*1\b.*
-    Should Match Regexp    ${output}    (?ms).*^\s*Number of Active MMEs:\s*1\b.*
+    ${output}=    Execute Command    idm oam -x status    shell=True
+    Should Contain    ${output}    Started: 1
+    Should Contain    ${output}    StackRunning: 1
+    Should Contain    ${output}    Availability: 1
+    Should Contain    ${output}    OpState: 1
+    Should Contain    ${output}    AdminState: 1
+    Should Contain    ${output}    RFTxStatus: 1
+    Should Contain    ${output}    Number of Active MMEs: 1
