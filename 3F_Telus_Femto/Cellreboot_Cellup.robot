@@ -70,8 +70,6 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
-    # (루트 셸이 # 라인이라고 가정)
-    Set Client Configuration    prompt=(?m)^#.*$    timeout=30 seconds
     Write Bare    \n
     ${_}=    Read Until Prompt
     
