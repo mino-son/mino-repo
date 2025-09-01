@@ -102,12 +102,13 @@ IPSEC DownUp
     Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
 
+    #여기부터 문제가 된 것 같은데..
     Read Until Prompt
     Write    idm oam -x alarm
-    ${output_ip_blocked}=    Read Until Prompt
-    Log     ${output_ip_blocked}
-    Log to console    ${output_ip_blocked}
-    Should Contain    ${output_ip_blockedoutput_status}    IPSec Tunnel Down
+    ${output_alarm}=    Read Until Prompt
+    Log     ${output_alarm}
+    Log to console    ${output_alarm}
+    Should Contain    ${output_alarm}    IPSec Tunnel Down
     Close all connections
 
     Open Connection SSH Druid Core
@@ -116,7 +117,7 @@ IPSEC DownUp
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
        
-    Sleep  630s
+    Sleep  60s
     Close all connections
 
 
