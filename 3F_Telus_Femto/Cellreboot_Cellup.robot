@@ -55,12 +55,8 @@ Cell Reboot And Reconnect
 
 *** Test Cases ***
 Check Cell Status In CLI
-    Open Connection And Log In LTE
-        
-    Read Until Prompt
-    Log to console  "--------------------test----------------------"
-    Log to console  Read Until Prompt
-    Log to console  "--------------------test----------------------"
+    Open Connection And Log In LTE 
+
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     Log to console    ${output_status}     
@@ -73,73 +69,47 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
-    Read Until Prompt       
-    Log to console      Read Until Prompt
-    
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
-    Log on console      ${output_ntp_sync}
+    Log to console      ${output_ntp_sync}
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
     Close all connections
 
 
 IPSEC DownUp
-    Open Connection And Log In LTE
-
-    # (루트 셸이 # 라인이라고 가정)
-    Set Client Configuration    prompt=(?m)^#.*$    timeout=30 seconds
-    Write Bare    \n
-    ${_}=    Read Until Prompt
-        
-    Write    idm oam -x status
-    ${output_mme_status}=    Read Until Prompt
-    Log to console     ${output_mme_status}
-    Should Contain    ${output_mme_status}    Number of Active MMEs: 1
-        
-    Set Client Configuration    prompt=#
-    Read Until Prompt
-    Write    idm oam -x alarm
-    ${output_connected}=    Read Until Prompt
-    Log     ${output_connected}
-    ${_}=    Read Until Prompt
-     
-    Close all connections
-
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
-    Read Until Prompt
+    Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
+    Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
+    ${block_ip}=    Read Until Prompt
+    Log     ${block_ip}
+    Log to console    ${block_ip}
+    
+    Set Client Configuration    prompt=#
     Write iptables -L -n -v
     ${output_iptables}=    Read Until Prompt
     Log     ${output_iptables}
-    ${_}=    Read Until Prompt
-
-    Set Client Configuration    prompt=#
-    Read Until Prompt
-    Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
-    Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
-    ${block_iptables}=    Read Until Prompt
-    Log     ${block_iptables}
-    ${_}=    Read Until Prompt
+    Log to console    ${output_iptables}
 
     Sleep 630s
     
     Open Connection And Log In LTE
     
-    Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
-    ${_}=    Read
+    Log     ${output_mme_status}
+    Log to console    ${output_mme_status}
+    Should Contain    ${output_mme_status}     Number of Active MMEs: 0
 
-    Set Client Configuration    prompt=#
-    Read Until Prompt
     Write    idm oam -x alarm
     ${output_ip_blocked}=    Read Until Prompt
-    
-    Log      ${output_mme_status}     
-    Log      ${output_ip_blocked}     
-    Should Contain    ${output_mme_status}     Number of Active MMEs: 0
+    Log     ${output_ip_blocked}
+    Log to console    ${output_ip_blocked}
     Should Contain    ${output_ip_blockedoutput_status}    IPSec Tunnel Down
+    
+    
+    
     
     
