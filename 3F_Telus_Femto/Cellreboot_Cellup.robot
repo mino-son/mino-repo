@@ -60,7 +60,7 @@ Check Cell Status In CLI
     Read Until Prompt
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
-    Log to console    ${output_status}     
+    log     Read Until Prompt
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
@@ -70,9 +70,10 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
+    Read Until Prompt
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
-    Log to console      ${output_ntp_sync}
+    log     Read Until Prompt
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
     Close all connections
@@ -82,6 +83,7 @@ IPSEC DownUp
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
+    Read Until Prompt
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
     ${block_ip}=    Read Until Prompt
