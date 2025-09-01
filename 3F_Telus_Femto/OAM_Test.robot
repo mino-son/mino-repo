@@ -43,15 +43,18 @@ Open Connection And Log In LTE
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     ${_}=    Read
-    
+    Log To Console    ===== trash BEGIN OUTPUT =====
+    Log To Console    ${output}
+    Log To Console    ===== trash END OUTPUT =====
+
     Write    idm oam -x status
     ${output}=    Read Until Prompt
     Log    ${output}
 
     # 콘솔에 그대로 출력 (Jenkins console)
-    Log To Console    ===== BEGIN OUTPUT =====
+    Log To Console    ===== output BEGIN OUTPUT =====
     Log To Console    ${output}
-    Log To Console    ===== END OUTPUT =====
+    Log To Console    ===== output END OUTPUT =====
 
     Should Contain    ${output}    *StackRunning: 1*
     Should Contain    ${output}    *RFTxStatus: 1*
