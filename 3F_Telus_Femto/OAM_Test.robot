@@ -45,10 +45,10 @@ Check OAM Status In CLI (Robust)
     Write    idm oam -x status
     ${output}=    Execute Command    idm oam -x status
     Log    ${output}
-    Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*Availability:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*OpState:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*AdminState:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*RFTxStatus:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*Number of Active MMEs:\s*1\b
+Should Match Regexp    ${output}    (?ms).*^\s*Started:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*StackRunning:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*Availability:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*OpState:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*AdminState:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*RFTxStatus:\s*1\b.*
+Should Match Regexp    ${output}    (?ms).*^\s*Number of Active MMEs:\s*1\b.*
