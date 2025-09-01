@@ -69,7 +69,7 @@ Check Cell Status In CLI
 
 Sync Source NTP status
     Open Connection And Log In LTE
-    ${_}=    Read Until Prompt
+    
     Read Until Prompt
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
@@ -83,8 +83,8 @@ IPSEC DownUp
     Open Connection And Log In LTE
 
     # 프롬프트/타임아웃 설정 + 새 프롬프트를 강제로 찍게 만들기
-    #Set Client Configuration    prompt=(?m)^#.*$    timeout=30 seconds
-    #Write Bare    \n
+    Set Client Configuration    prompt=(?m)^#.*$    timeout=30 seconds
+    Write Bare    \n
     ${_}=    Read Until Prompt
     
     Read Until Prompt
