@@ -41,19 +41,17 @@ Check ls Utility
 #	Open Connection And Log In LTE
 
 Check OAM Status In CLI
-    Open Connection And Log In LTE
-    # OAM CLI 진입
+    # OAM 진입
     Write    idm oam
-    # OAM 내부는 보통 '>' 계열 프롬프트이므로, 둘 다 수용
-    Set Client Configuration    prompt=(?m)[#>]\s*$
-    ${_}=    Read Until Prompt    # 배너/첫 프롬프트 소거
+    # OAM 내부 프롬프트는 '/>' 뒤로 ANSI/문자 조금 더 붙음 → 느슨하게 매칭
+    Set Client Configuration    prompt=/>.*$    timeout=15 seconds
+    ${_}=    Read Until Prompt     # 배너/첫 프롬프트 소거
 
     # status 실행 및 출력 수집
     Write    status
     ${output}=    Read Until Prompt
     Log    ${output}
 
-    # 배너가 아니라 'status' 결과에서 검증
     Should Contain         ${output}    TUL-LTEAO
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
@@ -62,4 +60,5 @@ Check OAM Status In CLI
     Should Match Regexp    ${output}    (?m)^\s*AdminState:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*RFTxStatus:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*Number of Active MMEs:\s*1\b
+
    
