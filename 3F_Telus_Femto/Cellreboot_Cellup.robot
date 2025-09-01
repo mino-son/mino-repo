@@ -90,29 +90,46 @@ IPSEC DownUp
     Log     ${block_ip}
     Log to console    ${block_ip}
     
-    Set Client Configuration    prompt=#
+    Read Until Prompt
     Write iptables -L -n -v
     ${output_iptables}=    Read Until Prompt
     Log     ${output_iptables}
     Log to console    ${output_iptables}
+    Close all connections
 
-    Sleep 630s
+    Sleep  630s
     
     Open Connection And Log In LTE
     
+    Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
     Log     ${output_mme_status}
     Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
 
+    Read Until Prompt
     Write    idm oam -x alarm
     ${output_ip_blocked}=    Read Until Prompt
     Log     ${output_ip_blocked}
     Log to console    ${output_ip_blocked}
     Should Contain    ${output_ip_blockedoutput_status}    IPSec Tunnel Down
+    Close all connections
+
+    Open Connection SSH Druid Core
+    Open Connection SecGW Core
     
-    
-    
-    
-    
+    Read Until Prompt
+    Write   iptables -D INPUT 1
+    Write   iptables -D OUTPUT 1
+    Write iptables -L -n -v
+    ${clean_ip_tables}=    Read Until Prompt
+    Log     ${clean_ip_tables}
+    Log to console    ${clean_ip_tables}
+    Sleep  630s
+    Close all connections
+
+
+Check Cell Status In CLI
+
+
