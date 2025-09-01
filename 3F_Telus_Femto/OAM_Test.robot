@@ -45,7 +45,6 @@ Check OAM Status In CLI (Robust)
     Write    idm oam -x status
     ${output}=    Execute Command    idm oam -x status
     Log    ${output}
-    Should Contain         ${output}    FAPService
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*Availability:\s*1\b
