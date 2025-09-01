@@ -31,3 +31,24 @@ Check ls Utility
     ${ls_output}=    Execute Command    ls
 
 *** Test Cases ***
+
+Cell Reboot And Reconnect
+    Open Connection And Log In LTE
+	Write    reboot
+	Sleep  300s
+    Close all connections
+	Open Connection And Log In LTE
+
+Cell status
+   Open Connection And Log In LTE
+   ${idm_oam_output}=   Execute Command  idm oam
+   Should Contain   ${idm_oam_output}   TUL-LTEAO
+   Write    status
+    Should Match Regexp   ${output}    (?m)^\\s*Started:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*StackRunning:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*Availability:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*OpState:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*AdminState:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*RFTxStatus:\\s*1\\b
+    Should Match Regexp   ${output}    (?m)^\\s*Number of Active MMEs:\\s*1\\b
+   
