@@ -20,6 +20,7 @@ Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
     SSHLibrary.Login    ${user_id}        ${user_pass}
     Write   su -
+    Read Until Regexp    Password:
     Write   ${root_pass}
     Set Client Configuration    prompt=#
 
