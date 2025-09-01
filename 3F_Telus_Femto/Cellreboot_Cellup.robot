@@ -66,7 +66,7 @@ Sync Source NTP status
     Read Until Prompt
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
-    Log Read Until Prompt
+    Log ${output_ntp_sync}
     Should Contain    ${output_status}    NTP Sync State
     Should Contain    ${output_status}    LOCKED
     Close all connections
