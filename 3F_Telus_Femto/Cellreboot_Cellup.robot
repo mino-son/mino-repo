@@ -88,16 +88,10 @@ IPSEC DownUp
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
     ${block_ip}=    Read Until Prompt
     Log     ${block_ip}
-    Log to console    ${block_ip}
-    
-    Read Until Prompt
-    Write iptables -L -n -v
-    ${output_iptables}=    Read Until Prompt
-    Log     ${output_iptables}
-    Log to console    ${output_iptables}
+    Log to console    ${block_ip} 
     Close all connections
 
-    Sleep  630s
+    Sleep  600s
     
     Open Connection And Log In LTE
     
