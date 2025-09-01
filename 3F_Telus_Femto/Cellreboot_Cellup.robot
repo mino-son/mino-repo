@@ -8,6 +8,8 @@ Test Teardown         SSHLibrary.Close all connections
 
 *** Variables ***
 ${cell_ssh_connection_ip}   172.30.100.120
+${DruidCore_ssh_connection_ip}   10.253.3.107
+${segw_ssh_connection_ip}   10.253.3.66
 ${pkg_lte_name}             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
 ${remote_working_path}      /tmp
 ${user_id}                  tultefc
@@ -29,6 +31,19 @@ Open Connection And Log In LTE
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
+    Set Client Configuration    prompt=#
+
+Open Connection SSH Druid Core
+    SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
+    SSHLibrary.Login    root    qucell12345
+    Set Client Configuration    prompt=#
+
+Open Connection SecGW Core
+    SSHLibrary.Open Connection    ${segw_ssh_connection_ip}
+    SSHLibrary.Login    secgw    qucell12345
+    Write    su -
+    Read Until Regexp    (?i)password:
+    Write    qucell12345
     Set Client Configuration    prompt=#
 
 Cell Reboot And Reconnect
@@ -53,21 +68,6 @@ Check Cell Status In CLI
     Should Contain    ${output_status}    Number of Active MMEs: 1
     Close all connections
 
-IPSEC Rekey
-# 1) 상태 출력 받기
-    Open Connection And Log In LTE
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt
-# 2) "Virtual IP: up <IP>" 라인에서 IP만 추출
-    #    - String 라이브러리의 Get Regexp Matches 사용 (캡처그룹 1개)
-    ${matches}=    Get Regexp Matches    ${output_status}    (?mi)^\\s*Virtual\\s+IP:\\s*up\\s*([0-9]{1,3}(?:\\.[0-9]{1,3}){3})\\b
-    Should Not Be Empty    ${matches}           # 반드시 하나 이상 나와야 함
-    ${virtual_ip}=    Get From List    ${matches}    0
-    Log ${virtual_ip}
-# 3) 확인/로그
-    Log To Console    Virtual IP = ${virtual_ip}
-    Close all connections
-
 Sync Source NTP status
     Open Connection And Log In LTE
     ${_}=    Read
@@ -79,3 +79,51 @@ Sync Source NTP status
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
     Close all connections
+
+
+IPSEC Down/Up
+    Open Connection SSH Druid Core
+    Open Connection SecGW Core
+    
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_mme_status}=    Read Until Prompt
+    ${_}=    Read
+    
+    Set Client Configuration    prompt=#
+    Read Until Prompt
+    Write    idm oam -x alarm
+    ${output_connected}=    Read Until Prompt
+    ${_}=    Read
+    
+    Set Client Configuration    prompt=#
+    Read Until Prompt
+    Write iptables -L -n -v
+    ${output_iptables}=    Read Until Prompt
+    ${_}=    Read
+    
+    Log     ${output_mme_status}
+    Log     ${output_connected}
+    Log     ${output_iptables}
+    Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
+    Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
+    Sleep 630s
+    
+    Open Connection And Log In LTE
+    
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_mme_status}=    Read Until Prompt
+    ${_}=    Read
+
+    Set Client Configuration    prompt=#
+    Read Until Prompt
+    Write    idm oam -x alarm
+    ${output_ip_blocked}=    Read Until Prompt
+    
+    Log      ${output_mme_status}     
+    Log      ${output_ip_blocked}     
+    Should Contain    ${output_mme_status}     Number of Active MMEs: 0
+    Should Contain    ${output_ip_blockedoutput_status}    IPSec Tunnel Down
+    
+    
