@@ -43,8 +43,7 @@ Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     # 1) OAM 진입
     Write    idm oam -x status
-    ${output}=    Read Until Prompt
-    Log    ${output}
+    Sleep (3)
 
     # 2) 검증
     Should Contain         ${output}    TUL-LTEAO
