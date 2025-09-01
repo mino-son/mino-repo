@@ -31,21 +31,20 @@ Open Connection And Log In LTE
     Write    ${root_pass}
     Set Client Configuration    prompt=#
 
-*** Test Cases ***
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
 	Write    reboot
 	Sleep  300s
     Close all connections
-	Open Connection And Log In LTE
+	Open Connection And Log In LTE    
 
+*** Test Cases ***
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     ${_}=    Read
     
-    # 1) 루트 프롬프트를 기준으로 잡고(중요), 잔여 버퍼 비우기
     Set Client Configuration    prompt=#
-    Read Until Prompt
+    #Read Until Prompt
 
     # 2) 명령 실행 → 다음 '#' 프롬프트가 나타날 때까지 전부 읽기
     Write    idm oam -x status
