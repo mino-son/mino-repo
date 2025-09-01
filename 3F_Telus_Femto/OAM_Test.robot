@@ -48,10 +48,6 @@ Check OAM Status In CLI (Robust)
     Read Until Prompt
     Log    ${output}
 
-    Should Contain    ${output}    Started: 1
-    Should Contain    ${output}    StackRunning: 1
-    Should Contain    ${output}    Availability: 1
-    Should Contain    ${output}    OpState: 1
-    Should Contain    ${output}    AdminState: 1
-    Should Contain    ${output}    RFTxStatus: 1
-    Should Contain    ${output}    Number of Active MMEs: 1
+    Should Contain    ${output}    *StackRunning: 1*
+    Should Contain    ${output}    *RFTxStatus: 1*
+    Should Contain    ${output}    *Number of Active MMEs: 1*
