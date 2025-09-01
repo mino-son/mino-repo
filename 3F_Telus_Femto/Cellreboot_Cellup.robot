@@ -80,7 +80,7 @@ Sync Source NTP status
     Close all connections
 
 
-IPSEC Down/Up
+IPSEC DownUp
     Open Connection And Log In LTE
         
     Set Client Configuration    prompt=#
