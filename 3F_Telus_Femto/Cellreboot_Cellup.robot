@@ -83,6 +83,8 @@ Sync Source NTP status
 
 IPSEC Down/Up
     Open Connection And Log In LTE
+    ${_}=    Read
+    Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
@@ -99,7 +101,10 @@ IPSEC Down/Up
     Close all connections
 
     Open Connection SSH Druid Core
+    ${_}=    Read
+    Set Client Configuration    prompt=#
     Open Connection SecGW Core
+    ${_}=    Read
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write iptables -L -n -v
