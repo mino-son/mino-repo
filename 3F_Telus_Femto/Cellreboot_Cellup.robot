@@ -60,7 +60,7 @@ Check Cell Status In CLI
     Read Until Prompt
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
-    Log on console     ${output_status}     
+    Log to console     ${output_status}     
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
@@ -71,7 +71,7 @@ Sync Source NTP status
     Open Connection And Log In LTE
     
     Read Until Prompt       
-    Log on console      ${Read Until Prompt}
+    Log to console      ${Read Until Prompt}
     
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
@@ -91,7 +91,7 @@ IPSEC DownUp
         
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
-    Log on console     ${output_mme_status}
+    Log to console     ${output_mme_status}
     Should Contain    ${output_mme_status}    Number of Active MMEs: 1
         
     Set Client Configuration    prompt=#
