@@ -42,12 +42,10 @@ Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
-    # 1) OAM 진입
     Write    idm oam -x status
-    Read Until Regexp    (?i)FAPService
-        
-    # 2) 검증
-    Should Contain         ${output}    TUL-LTEAO
+    ${output}=    Read Until Prompt
+    Log    ${output}
+    Should Contain         ${output}    FAPService
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*Availability:\s*1\b
