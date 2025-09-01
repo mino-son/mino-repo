@@ -82,9 +82,7 @@ Sync Source NTP status
 
 
 IPSEC Down/Up
-    Open Connection SSH Druid Core
-    Open Connection SecGW Core
-    
+    Open Connection And Log In LTE
     Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
@@ -96,17 +94,27 @@ IPSEC Down/Up
     ${output_connected}=    Read Until Prompt
     ${_}=    Read
     
+    Log     ${output_mme_status}
+    Log     ${output_connected}
+    Close all connections
+
+    Open Connection SSH Druid Core
+    Open Connection SecGW Core
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write iptables -L -n -v
     ${output_iptables}=    Read Until Prompt
-    ${_}=    Read
-    
-    Log     ${output_mme_status}
-    Log     ${output_connected}
     Log     ${output_iptables}
+    ${_}=    Read
+
+    Set Client Configuration    prompt=#
+    Read Until Prompt
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
+    ${block_iptables}=    Read Until Prompt
+    Log     ${block_iptables}
+    ${_}=    Read
+
     Sleep 630s
     
     Open Connection And Log In LTE
