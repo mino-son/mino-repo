@@ -122,5 +122,13 @@ IPSEC DownUp
 
 
 Check Cell Status In CLI
+    Open Connection And Log In LTE 
 
-
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     Read Until Prompt
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections
