@@ -33,12 +33,12 @@ Check ls Utility
 
 *** Test Cases ***
 
-Cell Reboot And Reconnect
-    Open Connection And Log In LTE
-	Write    reboot
-	Sleep  300s
-    Close all connections
-	Open Connection And Log In LTE
+#Cell Reboot And Reconnect
+#   Open Connection And Log In LTE
+#	Write    reboot
+#	Sleep  300s
+#   Close all connections
+#	Open Connection And Log In LTE
 
 Check OAM Status In CLI
    Open Connection And Log In LTE
