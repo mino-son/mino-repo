@@ -43,7 +43,7 @@ Open Connection And Log In LTE
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     Write    idm oam -x status
-    ${output}=    Read Until Prompt
+    ${output}=    Execute Command    idm oam -x status
     Log    ${output}
     Should Contain         ${output}    FAPService
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
