@@ -42,8 +42,11 @@ Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
+    Read Until Prompt
     Write    idm oam -x status
-    ${output}=    Execute Command    idm oam -x status    shell=True
+    ${output}=    Execute Command    "idm oam -x status"    shell=True
+    Log    ${output}
+    
     Should Contain    ${output}    Started: 1
     Should Contain    ${output}    StackRunning: 1
     Should Contain    ${output}    Availability: 1
