@@ -27,6 +27,7 @@ Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
     SSHLibrary.Login    ${user_id}    ${user_pass}
     Write    su -
+    Read Until Regexp    (?i)password:
     Write    ${root_pass}
     Set Client Configuration    prompt=#
 
@@ -43,7 +44,7 @@ Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     # 1) OAM 진입
     Write    idm oam -x status
-    Sleep (3)
+    Sleep 5s
 
     # 2) 검증
     Should Contain         ${output}    TUL-LTEAO
