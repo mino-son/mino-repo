@@ -39,24 +39,34 @@ Cell Reboot And Reconnect
 	Open Connection And Log In LTE    
 
 *** Test Cases ***
-Check OAM Status In CLI (Robust)
+Check Cell Status In CLI
     Open Connection And Log In LTE
     ${_}=    Read
     
     Set Client Configuration    prompt=#
     Read Until Prompt
-
-    # 2) 명령 실행 → 다음 '#' 프롬프트가 나타날 때까지 전부 읽기
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     
     # 콘솔에 그대로 출력 (Jenkins console)
-    Log To Console    ===== output BEGIN OUTPUT =====
-    Log To Console    ${output_status}
-    Log To Console    ===== output END OUTPUT =====
+    #Log To Console    ===== output BEGIN OUTPUT =====
+    #Log To Console    ${output_status}
+    #Log To Console    ===== output END OUTPUT =====
 
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
+    
+    Close all connections
 
-
+Sync Source NTP status
+    Open Connection And Log In LTE
+    ${_}=    Read
+    Set Client Configuration    prompt=#
+    Read Until Prompt
+    Write    idm oam -x syncmgrstate
+    Log Read Until Prompt
+    ${o utput_ntp_sync}=    Read Until Prompt
+    Should Contain    ${output_status}    NTP Sync State
+    Should Contain    ${output_status}    LOCKED
+    Close all connections
