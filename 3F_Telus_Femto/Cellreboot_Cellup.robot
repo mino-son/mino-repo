@@ -65,8 +65,8 @@ Sync Source NTP status
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x syncmgrstate
+    ${output_ntp_sync}=    Read Until Prompt
     Log Read Until Prompt
-    ${o utput_ntp_sync}=    Read Until Prompt
     Should Contain    ${output_status}    NTP Sync State
     Should Contain    ${output_status}    LOCKED
     Close all connections
