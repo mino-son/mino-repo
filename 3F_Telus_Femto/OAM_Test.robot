@@ -45,15 +45,15 @@ Check OAM Status In CLI (Robust)
     Write    idm oam -x status
     ${output}=    Read Until Prompt
     
-
     # 콘솔에 그대로 출력 (Jenkins console)
     Log To Console    ===== output BEGIN OUTPUT =====
     Log To Console    ${output}
     Log To Console    ===== output END OUTPUT =====
 
-    Should Contain    ${output}    *StackRunning: 1*
-    Should Contain    ${output}    *RFTxStatus: 1*
-    Should Contain    ${output}    *Number of Active MMEs: 1*
+    Should Contain    ${output}    StackRunning: 1
+    Should Contain    ${output}    RFTxStatus: 1
+    Should Contain    ${output}    Number of Active MMEs: 1
+
 
 # Cell Reboot And Reconnect
 #   Open Connection And Log In LTE
