@@ -18,11 +18,14 @@ ${root_pass}                *Tkfrnrtn#!
 *** Keywords ***
 Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
-    SSHLibrary.Login    ${user_id}        ${user_pass}
-    Write   su -
-    Read Until Regexp    Password:
-    Write   ${root_pass}
-    Set Client Configuration    prompt=#
+    SSHLibrary.Login    ${user_id}    ${user_pass}
+    Write    su -
+    Read Until Regexp    (?i)password:
+    Write    ${root_pass}
+    Read Until Regexp    [#]\s*$
+    # 기본 타임아웃과 프롬프트를 여기서 세팅
+    Set Client Configuration    prompt=#\\s*$    timeout=30 seconds
+    Read Until Prompt    # 버퍼 비우기
 
 Check ps Utility
     ${ps_output}=    Execute Command    ps
@@ -41,20 +44,15 @@ Check ls Utility
 #	Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
-    # 0) Connection SSH
     Open Connection And Log In LTE
-    # 1) OAM 진입
     Write    idm oam
-    # 배너/프롬프트 ANSI 섞여도 "TUL-LTEAO ... />" 조각이 보일 때까지만 동기화
-    ${_}=    Read Until Regexp    (?s)TUL-LTEAO.*?/>    timeout=20 seconds
+    # >> timeout=... 제거 (세션 기본값 사용)
+    ${_}=    Read Until Regexp    (?s)TUL-LTEAO.*?/>
 
-    # 2) status 실행
     Write    status
-    # status의 "마지막 줄"로 간주할 지표까지 대기 (프롬프트에 의존 X)
-    ${output}=    Read Until Regexp    (?m)^\\s*Number of Active MMEs:\\s*\\d+\\b    timeout=30 seconds
+    ${output}=    Read Until Regexp    (?m)^\\s*Number of Active MMEs:\\s*\\d+\\b
     Log    ${output}
 
-    # 3) 검증
     Should Contain         ${output}    TUL-LTEAO
     Should Match Regexp    ${output}    (?m)^\\s*Started:\\s*1\\b
     Should Match Regexp    ${output}    (?m)^\\s*StackRunning:\\s*1\\b
@@ -64,4 +62,6 @@ Check OAM Status In CLI (Robust)
     Should Match Regexp    ${output}    (?m)^\\s*RFTxStatus:\\s*1\\b
     Should Match Regexp    ${output}    (?m)^\\s*Number of Active MMEs:\\s*1\\b
 
+    Write    exit
+    ${_}=    Read Until Prompt
    
