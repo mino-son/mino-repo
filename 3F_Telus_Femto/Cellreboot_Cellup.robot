@@ -83,7 +83,7 @@ Sync Source NTP status
 IPSEC DownUp
     Open Connection And Log In LTE
         
-    Set Client Configuration    prompt=#
+    #Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
