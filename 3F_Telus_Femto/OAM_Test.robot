@@ -33,13 +33,6 @@ Open Connection And Log In LTE
 
 *** Test Cases ***
 
-#Cell Reboot And Reconnect
-#   Open Connection And Log In LTE
-#	Write    reboot
-#	Sleep  300s
-#   Close all connections
-#	Open Connection And Log In LTE
-
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     ${_}=    Read
@@ -61,3 +54,10 @@ Check OAM Status In CLI (Robust)
     Should Contain    ${status}    *StackRunning: 1*
     Should Contain    ${status}    *RFTxStatus: 1*
     Should Contain    ${status}    *Number of Active MMEs: 1*
+
+# Cell Reboot And Reconnect
+#   Open Connection And Log In LTE
+#	Write    reboot
+#	Sleep  300s
+#   Close all connections
+#	Open Connection And Log In LTE
