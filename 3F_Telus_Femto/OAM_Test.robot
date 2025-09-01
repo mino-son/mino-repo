@@ -41,6 +41,7 @@ Check ls Utility
 #	Open Connection And Log In LTE
 
 Check OAM Status In CLI
+    Open Connection And Log In LTE
     # OAM 진입
     Write    idm oam
     # OAM 내부 프롬프트는 '/>' 뒤로 ANSI/문자 조금 더 붙음 → 느슨하게 매칭
