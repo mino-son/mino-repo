@@ -44,8 +44,7 @@ Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     Read Until Prompt
     Write    idm oam -x status
-    ${output}=    Execute Command   idm oam -x status
-    Read Until Prompt
+    ${output}=    Read Until Prompt
     Log    ${output}
 
     # 콘솔에 그대로 출력 (Jenkins console)
