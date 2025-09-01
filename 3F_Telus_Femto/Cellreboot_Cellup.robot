@@ -47,12 +47,7 @@ Check Cell Status In CLI
     Read Until Prompt
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
-    
-    # 콘솔에 그대로 출력 (Jenkins console)
-    #Log To Console    ===== output BEGIN OUTPUT =====
-    #Log To Console    ${output_status}
-    #Log To Console    ===== output END OUTPUT =====
-
+    Log      ${output_status}     
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
