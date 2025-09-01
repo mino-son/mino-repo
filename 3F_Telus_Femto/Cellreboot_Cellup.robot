@@ -98,7 +98,7 @@ IPSEC DownUp
     Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
-    Log     ${output_mme_status}
+    Log      ${output_mme_status}
     Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
 
@@ -112,14 +112,10 @@ IPSEC DownUp
 
     Open Connection SSH Druid Core
     Open Connection SecGW Core
-    
-    Read Until Prompt
+     
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
-    Write iptables -L -n -v
-    ${clean_ip_tables}=    Read Until Prompt
-    Log     ${clean_ip_tables}
-    Log to console    ${clean_ip_tables}
+       
     Sleep  630s
     Close all connections
 
