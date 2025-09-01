@@ -90,8 +90,7 @@ IPSEC DownUp
     ${output_mme_status}=    Read Until Prompt
     Log     ${output_mme_status}
     Should Contain    ${output_mme_status}    Number of Active MMEs: 1
-    ${_}=    Read Until Prompt
-    
+        
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x alarm
