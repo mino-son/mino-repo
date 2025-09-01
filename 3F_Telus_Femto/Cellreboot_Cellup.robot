@@ -51,7 +51,23 @@ Check Cell Status In CLI
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
-    
+    Close all connections
+
+IPSEC Rekey
+# 1) 상태 출력 받기
+    Open Connection And Log In LTE
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+
+# 2) "Virtual IP: up <IP>" 라인에서 IP만 추출
+    #    - String 라이브러리의 Get Regexp Matches 사용 (캡처그룹 1개)
+    ${matches}=    Get Regexp Matches    ${output_status}    (?mi)^\\s*Virtual\\s+IP:\\s*up\\s*([0-9]{1,3}(?:\\.[0-9]{1,3}){3})\\b
+    Should Not Be Empty    ${matches}           # 반드시 하나 이상 나와야 함
+    ${virtual_ip}=    Get From List    ${matches}    0
+    Log ${virtual_ip}
+
+# 3) 확인/로그
+    Log To Console    Virtual IP = ${virtual_ip}
     Close all connections
 
 Sync Source NTP status
