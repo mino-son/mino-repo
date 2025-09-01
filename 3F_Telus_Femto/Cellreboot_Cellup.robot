@@ -32,6 +32,12 @@ Open Connection And Log In LTE
     Set Client Configuration    prompt=#
 
 *** Test Cases ***
+Cell Reboot And Reconnect
+    Open Connection And Log In LTE
+	Write    reboot
+	Sleep  300s
+    Close all connections
+	Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
@@ -55,9 +61,3 @@ Check OAM Status In CLI (Robust)
     Should Contain    ${output_status}    Number of Active MMEs: 1
 
 
-# Cell Reboot And Reconnect
-#   Open Connection And Log In LTE
-#	Write    reboot
-#	Sleep  300s
-#   Close all connections
-#	Open Connection And Log In LTE
