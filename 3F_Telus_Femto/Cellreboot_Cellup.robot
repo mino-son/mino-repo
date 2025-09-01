@@ -57,8 +57,8 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE
         
-    Set Client Configuration    prompt=#
-    Read Until Prompt
+    #Set Client Configuration    prompt=#
+    #Read Until Prompt
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     Log      ${output_status}     
@@ -71,8 +71,8 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
-    Set Client Configuration    prompt=#
-    Read Until Prompt
+    #Set Client Configuration    prompt=#
+    #Read Until Prompt
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt
     Log      ${output_ntp_sync}
@@ -84,8 +84,8 @@ Sync Source NTP status
 IPSEC DownUp
     Open Connection And Log In LTE
         
-    Set Client Configuration    prompt=#
-    Read Until Prompt
+    #Set Client Configuration    prompt=#
+    #Read Until Prompt
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
     Log     ${output_mme_status}
