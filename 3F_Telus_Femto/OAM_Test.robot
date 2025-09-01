@@ -41,6 +41,7 @@ Check ls Utility
 #	Open Connection And Log In LTE
 
 Check OAM Status In CLI
+    Open Connection And Log In LTE
     # OAM CLI 진입
     Write    idm oam
     # OAM 내부는 보통 '>' 계열 프롬프트이므로, 둘 다 수용
