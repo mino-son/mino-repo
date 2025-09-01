@@ -57,7 +57,7 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    Set Client Configuration    prompt=#
+    Read Until Prompt
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     Log to console    ${output_status}     
