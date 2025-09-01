@@ -42,19 +42,11 @@ Open Connection And Log In LTE
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     # 1) OAM 진입
-    Write    idm oam
-    # OAM 프롬프트 라인 등장까지 대기 (예: "OAM TUL-LTEAO-5.3.5 />")
-    ${_}=    Read Until Regexp    (?m)^OAM .*?/>\s*$
-    # OAM 내부 프롬프트로 교체
-    Set Client Configuration    prompt=(?m)^OAM .*?/>\s*$
-    Read Until Prompt
-
-    # 2) status 실행
-    Write    status
+    Write    idm oam -x status
     ${output}=    Read Until Prompt
     Log    ${output}
 
-    # 3) 검증
+    # 2) 검증
     Should Contain         ${output}    TUL-LTEAO
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
     Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
