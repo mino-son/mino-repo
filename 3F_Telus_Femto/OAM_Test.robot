@@ -48,15 +48,16 @@ Check OAM Status In CLI (Robust)
     ${_}=    Read Until Regexp    (?m)^OAM .*?/>.*$
     # 이제 OAM용 프롬프트로 변경
     Set Client Configuration    prompt=(?m)^OAM .*?/>.*$
+    
     Write    status
-    ${output}=    Read Until Prompt
-    Log    ${output}
+    ${status}=    Read Until Prompt
+    [Return]    ${status}
 
     # 콘솔에 그대로 출력 (Jenkins console)
     Log To Console    ===== output BEGIN OUTPUT =====
-    Log To Console    ${output}
+    Log To Console    ${status}
     Log To Console    ===== output END OUTPUT =====
 
-    Should Contain    ${output}    *StackRunning: 1*
-    Should Contain    ${output}    *RFTxStatus: 1*
-    Should Contain    ${output}    *Number of Active MMEs: 1*
+    Should Contain    ${status}    *StackRunning: 1*
+    Should Contain    ${status}    *RFTxStatus: 1*
+    Should Contain    ${status}    *Number of Active MMEs: 1*
