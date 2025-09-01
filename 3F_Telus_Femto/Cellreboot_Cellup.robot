@@ -56,8 +56,7 @@ Cell Reboot And Reconnect
 *** Test Cases ***
 Check Cell Status In CLI
     Open Connection And Log In LTE
-    #${_}=    Read
-    
+        
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x status
@@ -70,7 +69,7 @@ Check Cell Status In CLI
 
 Sync Source NTP status
     Open Connection And Log In LTE
-    #${_}=    Read
+    
     Set Client Configuration    prompt=#
     Read Until Prompt
     Write    idm oam -x syncmgrstate
