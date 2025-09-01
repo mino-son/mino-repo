@@ -42,8 +42,9 @@ Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
-    ${_}=    Read       #얘가 버퍼비워줌
+    ${_}=    Read
     Write    idm oam
+    Write    status
     ${output}=    Read Until Prompt
     Log    ${output}
 
