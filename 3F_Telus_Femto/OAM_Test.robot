@@ -43,16 +43,16 @@ Check OAM Status In CLI (Robust)
 
     # 2) 명령 실행 → 다음 '#' 프롬프트가 나타날 때까지 전부 읽기
     Write    idm oam -x status
-    ${output}=    Read Until Prompt
+    ${output_status}=    Read Until Prompt
     
     # 콘솔에 그대로 출력 (Jenkins console)
     Log To Console    ===== output BEGIN OUTPUT =====
-    Log To Console    ${output}
+    Log To Console    ${output_status}
     Log To Console    ===== output END OUTPUT =====
 
-    Should Contain    ${output}    StackRunning: 1
-    Should Contain    ${output}    RFTxStatus: 1
-    Should Contain    ${output}    Number of Active MMEs: 1
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
 
 
 # Cell Reboot And Reconnect
