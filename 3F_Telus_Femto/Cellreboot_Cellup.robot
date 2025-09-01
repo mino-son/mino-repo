@@ -44,7 +44,7 @@ Check OAM Status In CLI (Robust)
     ${_}=    Read
     
     Set Client Configuration    prompt=#
-    #Read Until Prompt
+    Read Until Prompt
 
     # 2) 명령 실행 → 다음 '#' 프롬프트가 나타날 때까지 전부 읽기
     Write    idm oam -x status
