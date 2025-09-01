@@ -40,26 +40,28 @@ Check ls Utility
 #   Close all connections
 #	Open Connection And Log In LTE
 
-Check OAM Status In CLI
+Check OAM Status In CLI (Robust)
+    # 0) Connection SSH
     Open Connection And Log In LTE
-    # OAM 진입
+    # 1) OAM 진입
     Write    idm oam
-    # OAM 내부 프롬프트는 '/>' 뒤로 ANSI/문자 조금 더 붙음 → 느슨하게 매칭
-    Set Client Configuration    prompt=/>.*$    timeout=15 seconds
-    ${_}=    Read Until Prompt     # 배너/첫 프롬프트 소거
+    # 배너/프롬프트 ANSI 섞여도 "TUL-LTEAO ... />" 조각이 보일 때까지만 동기화
+    ${_}=    Read Until Regexp    (?s)TUL-LTEAO.*?/>    timeout=20 seconds
 
-    # status 실행 및 출력 수집
+    # 2) status 실행
     Write    status
-    ${output}=    Read Until Prompt
+    # status의 "마지막 줄"로 간주할 지표까지 대기 (프롬프트에 의존 X)
+    ${output}=    Read Until Regexp    (?m)^\\s*Number of Active MMEs:\\s*\\d+\\b    timeout=30 seconds
     Log    ${output}
 
+    # 3) 검증
     Should Contain         ${output}    TUL-LTEAO
-    Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*StackRunning:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*Availability:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*OpState:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*AdminState:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*RFTxStatus:\s*1\b
-    Should Match Regexp    ${output}    (?m)^\s*Number of Active MMEs:\s*1\b
+    Should Match Regexp    ${output}    (?m)^\\s*Started:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*StackRunning:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*Availability:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*OpState:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*AdminState:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*RFTxStatus:\\s*1\\b
+    Should Match Regexp    ${output}    (?m)^\\s*Number of Active MMEs:\\s*1\\b
 
    
