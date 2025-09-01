@@ -36,24 +36,24 @@ Open Connection And Log In LTE
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     ${_}=    Read
-    Write    idm oam
-    # 실제로 OAM 프롬프트가 뜨는 줄을 한 번 받아 동기화
-    ${_}=    Read Until Regexp    (?m)^OAM .*?/>.*$
-    # 이제 OAM용 프롬프트로 변경
-    Set Client Configuration    prompt=(?m)^OAM .*?/>.*$
     
-    Write    status
-    ${status}=    Read Until Prompt
-    [Return]    ${status}
+    # 1) 루트 프롬프트를 기준으로 잡고(중요), 잔여 버퍼 비우기
+    Set Client Configuration    prompt=#
+    Read Until Prompt
+
+    # 2) 명령 실행 → 다음 '#' 프롬프트가 나타날 때까지 전부 읽기
+    Write    idm oam -x status
+    ${output}=    Read Until Prompt
+    
 
     # 콘솔에 그대로 출력 (Jenkins console)
     Log To Console    ===== output BEGIN OUTPUT =====
-    Log To Console    ${status}
+    Log To Console    ${output}
     Log To Console    ===== output END OUTPUT =====
 
-    Should Contain    ${status}    *StackRunning: 1*
-    Should Contain    ${status}    *RFTxStatus: 1*
-    Should Contain    ${status}    *Number of Active MMEs: 1*
+    Should Contain    ${output}    *StackRunning: 1*
+    Should Contain    ${output}    *RFTxStatus: 1*
+    Should Contain    ${output}    *Number of Active MMEs: 1*
 
 # Cell Reboot And Reconnect
 #   Open Connection And Log In LTE
