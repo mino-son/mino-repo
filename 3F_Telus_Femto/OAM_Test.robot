@@ -44,6 +44,10 @@ Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     ${_}=    Read
     Write    idm oam
+    # 실제로 OAM 프롬프트가 뜨는 줄을 한 번 받아 동기화
+    ${_}=    Read Until Regexp    (?m)^OAM .*?/>.*$
+    # 이제 OAM용 프롬프트로 변경
+    Set Client Configuration    prompt=(?m)^OAM .*?/>.*$
     Write    status
     ${output}=    Read Until Prompt
     Log    ${output}
