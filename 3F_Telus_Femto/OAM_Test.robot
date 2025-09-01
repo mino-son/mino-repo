@@ -44,8 +44,8 @@ Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
     # 1) OAM 진입
     Write    idm oam -x status
-    Sleep 5s
-
+    Read Until Regexp    (?i)FAPService
+        
     # 2) 검증
     Should Contain         ${output}    TUL-LTEAO
     Should Match Regexp    ${output}    (?m)^\s*Started:\s*1\b
