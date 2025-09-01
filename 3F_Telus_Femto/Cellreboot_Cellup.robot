@@ -66,7 +66,7 @@ Check Cell Status In CLI
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
     Close all connections
-    Sleep 3s
+    
 
 Sync Source NTP status
     Open Connection And Log In LTE
@@ -79,7 +79,7 @@ Sync Source NTP status
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
     Close all connections
-    Sleep 3s
+
 
 IPSEC DownUp
     Open Connection And Log In LTE
