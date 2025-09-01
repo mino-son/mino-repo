@@ -16,24 +16,19 @@ ${root_pass}                *Tkfrnrtn#!
 
 
 *** Keywords ***
-Open Connection And Log In LTE
-    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
-    SSHLibrary.Login    ${user_id}    ${user_pass}
-    Write    su -
-    Read Until Regexp    (?i)password:
-    Write    ${root_pass}
-    # BusyBox 배너 포함, 루트 프롬프트(#) 등장까지 대기
-    ${_}=    Read Until Regexp    (?s)\n#\s*$
-    # 이후 기본 프롬프트/타임아웃 설정 (세션 전체에 적용)
-    Set Client Configuration    prompt=(?m)^#\s*$    timeout=30 seconds
-    Read Until Prompt    # 버퍼 잔여 제거
-
 Check ps Utility
     ${ps_output}=    Execute Command    ps
     Should Contain    ${ps_output}    ps
 
 Check ls Utility
     ${ls_output}=    Execute Command    ls
+
+Open Connection And Log In LTE
+    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
+    SSHLibrary.Login    ${user_id}    ${user_pass}
+    Write    su -
+    Write    ${root_pass}
+    Set Client Configuration    prompt=#
 
 *** Test Cases ***
 
