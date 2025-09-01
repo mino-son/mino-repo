@@ -12,7 +12,6 @@ ${pkg_lte_name}             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
 ${remote_working_path}      /tmp
 ${user_id}                  tultefc
 ${user_pass}                *eksvkxQkd#!
-${root_id}                  su -
 ${root_pass}                *Tkfrnrtn#!
 
 
@@ -20,7 +19,8 @@ ${root_pass}                *Tkfrnrtn#!
 Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
     SSHLibrary.Login    ${user_id}        ${user_pass}
-    SSHLibrary.Login    ${root_id}        ${root_pass}
+    Write   su -
+    Write   ${root_pass}
     Set Client Configuration    prompt=#
 
 Check ps Utility
@@ -39,16 +39,20 @@ Cell Reboot And Reconnect
     Close all connections
 	Open Connection And Log In LTE
 
-Cell status
+Check OAM Status In CLI
    Open Connection And Log In LTE
-   ${idm_oam_output}=   Execute Command  idm oam
-   Should Contain   ${idm_oam_output}   TUL-LTEAO
-   Write    status
-    Should Match Regexp   ${output}    (?m)^\\s*Started:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*StackRunning:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*Availability:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*OpState:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*AdminState:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*RFTxStatus:\\s*1\\b
-    Should Match Regexp   ${output}    (?m)^\\s*Number of Active MMEs:\\s*1\\b
+    Write    idm oam
+    ${oam_banner}=    Read Until Prompt
+    Should Contain    ${oam_banner}    TUL-LTEAO
+    Write    status
+    ${output}=    Read Until Prompt
+    Log    ${output}
+
+    Should Match Regexp   ${output}    (?m)^\s*Started:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*StackRunning:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*Availability:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*OpState:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*AdminState:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*RFTxStatus:\s*1\b
+    Should Match Regexp   ${output}    (?m)^\s*Number of Active MMEs:\s*1\b
    
