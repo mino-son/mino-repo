@@ -42,7 +42,7 @@ Open Connection And Log In LTE
 
 Check OAM Status In CLI (Robust)
     Open Connection And Log In LTE
-    Read Until Prompt
+    
     Write    idm oam -x status
     ${output}=    Read Until Prompt
     Log    ${output}
