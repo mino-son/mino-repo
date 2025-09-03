@@ -65,9 +65,12 @@ Open Browser And Page
     New Browser    chromium    headless=False
     New Context
     New Page
+Open Browser And Context
+    New Browser    chromium    headless=True
+    New Context    viewport={'width':1366,'height':768}
+    New Page    
 Take Screenshot On Failure
-    Run Keyword If Test Failed    Take Screenshot    fullPage=True
-    
+    Run Keyword If Test Failed    Take Screenshot    fullPage=True    
 
 
 *** Test Cases ***
