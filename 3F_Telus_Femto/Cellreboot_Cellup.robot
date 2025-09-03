@@ -3,8 +3,7 @@ Library                SSHLibrary
 Library                SCPLibrary
 Library                String
 Library                DateTime
-#Suite Setup            Open Connection And Log In
-Test Teardown         SSHLibrary.Close all connections
+Library                Browser
 
 *** Variables ***
 ${cell_ssh_connection_ip}   172.30.100.120
@@ -54,6 +53,7 @@ Cell Reboot And Reconnect
 	Open Connection And Log In LTE    
 
 *** Test Cases ***
+
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
@@ -79,7 +79,7 @@ Sync Source NTP status
     Close all connections
 
 
-IPSEC DownUp
+#IPSEC DownUp
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
@@ -121,7 +121,7 @@ IPSEC DownUp
     Close all connections
 
 
-Check Cell Status In CLI
+#Check Cell Status In CLI
     Open Connection And Log In LTE 
 
     Read Until Prompt
