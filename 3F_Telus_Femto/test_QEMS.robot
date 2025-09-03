@@ -102,8 +102,8 @@ QEMS 로그인 시도
     # 4) (대안) 타이틀로 2차 검증
     ${title}=    Get Title
     Log    TITLE=${title}
-    # 필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
-    # Should Contain    ${title}    QEMS
+    #필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
+    Should Contain    ${title}    QEMS
 
     # 스크린샷 저장 (Jenkins에서 results/*.png 아카이브)
-    Take Screenshot    login_success.png
+    Take Screenshot    filename=${OUTPUT DIR}/login_success.png    fullPage=True
