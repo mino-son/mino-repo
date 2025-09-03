@@ -81,7 +81,12 @@ QEMS 로그인 시도
     Fill Text    input[type="password"]    ${QEMS_PASSWORD}
     Click        text="Sign In"
     Wait For Load State    networkidle    10s
+    
     # 로그인 성공 후 페이지 확인 예시
     ${title}=    Get Title
+    # 로그인 성공 확인
+    Wait For Elements State    text=Dashboard    visible    10s
+    # 스크린샷 저장
+    Take Screenshot    login_success.png
 
 
