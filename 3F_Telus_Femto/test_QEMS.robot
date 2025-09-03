@@ -77,6 +77,26 @@ Open Browser And Context
 Take Screenshot On Failure
     Run Keyword If Test Failed    Take Screenshot    fullPage=True    
 
+Reboot Femto From QEMS
+    [Arguments]    ${A}    ${B}    ${C}    ${D}
+    Wait For Load State    networkidle    10s
+
+    Wait For Elements State    text="${A}"    visible    10s
+    Click    text="${A}"
+    Sleep    5s
+
+    Wait For Elements State    text="${B}"    visible    10s
+    Click    text="${B}"
+    Sleep    5s
+
+    Wait For Elements State    text="${C}"    visible    10s
+    Click    text="${C}"
+    Sleep    5s
+
+    Wait For Elements State    text="${D}"    visible    10s
+    Click    text="${D}"
+    Sleep    5s
+
 
 *** Test Cases ***
 Telus QEMS Login TakeScreenShot
@@ -110,21 +130,5 @@ Telus QEMS Login TakeScreenShot
     Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
     Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
 
-QEMS Femto reboot
-    [Arguments]    ${Configuration}    ${Device Monitoring (LTE)}    ${민호_SN19_101.116_6984} ${Reboot}
-    Wait For Elements State    text="${Configuration}"    visible    10s
-    Click    text="${Configuration}"
-    Sleep    5s
-
-    Wait For Elements State    text="${Device Monitoring (LTE)}"    visible    10s
-    Click    text="${Device Monitoring (LTE)}"
-    Sleep    5s
-
-    Wait For Elements State    text="${민호_SN19_101.116_6984}"    visible    10s
-    Click    text="${민호_SN19_101.116_6984}"
-    Sleep    5s
-
-    
-    Wait For Elements State    text="${Reboot}"    visible    10s
-    Click    text="${Reboot}"
-    
+Reboot Femto From QEMS
+    Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984    Reboot
