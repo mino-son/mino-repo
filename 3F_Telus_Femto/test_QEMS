@@ -60,8 +60,6 @@ Cell Reboot And Reconnect
     Close all connections
 	Open Connection And Log In LTE    
 
-
-
 ### QEMS 설정을 위한 추가 code 입니다.
 Open Browser And Page
     New Browser    chromium    headless=False
