@@ -19,9 +19,14 @@ ${user_pass}                *eksvkxQkd#!
 ${root_pass}                *Tkfrnrtn#!
 ${HEADLESS}       True
 ${TIMEOUT}        10s
+
 ${QEMS_URL}     http://10.253.3.83:9080/login.html
 ${QEMS_USERNAME}       admin
 ${QEMS_PASSWORD}       admin
+${MENU_A_TEXT}    A            # ← 여기에 실제 A 문구
+${MENU_B_TEXT}    B            # ← 여기에 실제 B 문구 (A 클릭 후 보이는 항목)
+${MENU_C_TEXT}    C            # ← (옵션) C 문구 (B 클릭 후 보이는 항목이면)
+
 
 
 *** Keywords ***
@@ -74,7 +79,7 @@ Take Screenshot On Failure
 
 
 *** Test Cases ***
-Telus_QEMS connection_Login
+Telus QEMS Login TakeScreenShot
     # 전반 타임아웃을 넉넉히
     Set Browser Timeout    20s
 
@@ -105,5 +110,21 @@ Telus_QEMS connection_Login
     Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
     Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
 
+QEMS Femto reboot
+    [Arguments]    ${Configuration}    ${Device Monitoring (LTE)}    ${민호_SN19_101.116_6984} ${Reboot}
+    Wait For Elements State    text="${Configuration}"    visible    10s
+    Click    text="${Configuration}"
+    Sleep    5s
 
+    Wait For Elements State    text="${Device Monitoring (LTE)}"    visible    10s
+    Click    text="${Device Monitoring (LTE)}"
+    Sleep    5s
 
+    Wait For Elements State    text="${민호_SN19_101.116_6984}"    visible    10s
+    Click    text="${민호_SN19_101.116_6984}"
+    Sleep    5s
+
+    
+    Wait For Elements State    text="${Reboot}"    visible    10s
+    Click    text="${Reboot}"
+    
