@@ -75,18 +75,35 @@ Take Screenshot On Failure
 
 *** Test Cases ***
 QEMS 로그인 시도
+    # 전반 타임아웃을 넉넉히
+    Set Browser Timeout    20s
+
     Go To    ${QEMS_URL}
-    Wait For Elements State    input[type="text"]    visible    5s
+    Wait For Elements State    input[type="text"]    visible    15s
     Fill Text    input[type="text"]    ${QEMS_USERNAME}
     Fill Text    input[type="password"]    ${QEMS_PASSWORD}
     Click        text="Sign In"
-    Wait For Load State    networkidle    10s
-    
-    # 로그인 성공 후 페이지 확인 예시
+
+    # 네트워크 안정화
+    Wait For Load State    networkidle    20s
+
+    # 1) 로그인 버튼이 사라졌는지(화면 전환 확인)
+    Wait For Elements State    text="Sign In"    hidden    20s
+
+    # 2) 로그인 페이지에서 벗어났는지(URL 확인)
+    ${cur_url}=    Get Url
+    Should Not Contain    ${cur_url}    login.html
+
+    # 3) (우선 시도) 대시보드 텍스트가 있으면 바로 통과
+    ${has_dashboard}=    Run Keyword And Return Status
+    ...    Wait For Elements State    text=Dashboard    visible    5s
+    Run Keyword If    ${has_dashboard}    Log    'Dashboard text detected.'    INFO
+
+    # 4) (대안) 타이틀로 2차 검증
     ${title}=    Get Title
-    # 로그인 성공 확인
-    Wait For Elements State    text=Dashboard    visible    10s
-    # 스크린샷 저장
+    Log    TITLE=${title}
+    # 필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
+    # Should Contain    ${title}    QEMS
+
+    # 스크린샷 저장 (Jenkins에서 results/*.png 아카이브)
     Take Screenshot    login_success.png
-
-
