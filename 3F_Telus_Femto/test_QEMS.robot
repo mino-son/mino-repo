@@ -101,7 +101,8 @@ Telus_QEMS connection_Login
     Should Contain    ${title}    QEMS
 
     # 스크린샷 저장 (Jenkins에서 results/*.png 아카이브)
-    Take Screenshot    filename=${OUTPUT DIR}/login_success.png    fullPage=True
+    Take Screenshot    ${OUTPUT DIR}/login_success.png    fullPage=True
+    
     Log to console      ----------------test------------
     Log to console      ${OUTPUT DIR}
     Log to console      ----------------test------------
