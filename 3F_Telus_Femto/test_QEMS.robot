@@ -100,9 +100,6 @@ Telus_QEMS connection_Login
     #필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
     Should Contain    ${title}    QEMS
 
-    # 스크린샷 저장 (Jenkins에서 results/*.png 아카이브)
-    Take Screenshot    ${OUTPUT DIR}/login_success.png    fullPage=True
     
-    Log to console      ----------------test------------
-    Log to console      ${OUTPUT DIR}
-    Log to console      ----------------test------------
+    
+
