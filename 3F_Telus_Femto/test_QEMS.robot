@@ -75,7 +75,7 @@ Take Screenshot On Failure
 
 *** Test Cases ***
 QEMS 로그인 시도
-    Go To    ${URL}
+    Go To    ${QEMS_URL}
     Wait For Elements State    input[type="text"]    visible    5s
     Fill Text    input[type="text"]    ${QEMS_USERNAME}
     Fill Text    input[type="password"]    ${QEMS_PASSWORD}
