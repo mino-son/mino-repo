@@ -101,5 +101,9 @@ Telus_QEMS connection_Login
     Should Contain    ${title}    QEMS
 
     
-    
+    ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
+    Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
+    Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
+
+
 
