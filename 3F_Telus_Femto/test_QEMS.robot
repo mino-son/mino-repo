@@ -65,9 +65,12 @@ Open Browser And Page
     New Browser    chromium    headless=False
     New Context
     New Page
+Open Browser And Context
+    New Browser    chromium    headless=True
+    New Context    viewport={'width':1366,'height':768}
+    New Page    
 Take Screenshot On Failure
-    Run Keyword If Test Failed    Take Screenshot    fullPage=True
-    
+    Run Keyword If Test Failed    Take Screenshot    fullPage=True    
 
 
 *** Test Cases ***
@@ -79,4 +82,6 @@ QEMS 로그인 시도
     Click        text="Sign In"
     Wait For Load State    networkidle    10s
     # 로그인 성공 후 페이지 확인 예시
-    # Expect Page Contains    Dashboard
+    Expect Page Contains    Dashboard
+
+
