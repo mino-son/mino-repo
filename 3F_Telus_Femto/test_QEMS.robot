@@ -74,7 +74,7 @@ Take Screenshot On Failure
 
 
 *** Test Cases ***
-QEMS 로그인 시도
+Telus_QEMS connection_Login
     # 전반 타임아웃을 넉넉히
     Set Browser Timeout    20s
 
@@ -94,12 +94,7 @@ QEMS 로그인 시도
     ${cur_url}=    Get Url
     Should Not Contain    ${cur_url}    login.html
 
-    # 3) (우선 시도) 대시보드 텍스트가 있으면 바로 통과
-    ${has_dashboard}=    Run Keyword And Return Status
-    ...    Wait For Elements State    text=Dashboard    visible    5s
-    Run Keyword If    ${has_dashboard}    Log    'Dashboard text detected.'    INFO
-
-    # 4) (대안) 타이틀로 2차 검증
+    # 3) (대안) 타이틀로 2차 검증
     ${title}=    Get Title
     Log    TITLE=${title}
     #필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
