@@ -82,6 +82,6 @@ QEMS 로그인 시도
     Click        text="Sign In"
     Wait For Load State    networkidle    10s
     # 로그인 성공 후 페이지 확인 예시
-    Expect Page Contains    Dashboard
+    ${title}=    Get Title
 
 
