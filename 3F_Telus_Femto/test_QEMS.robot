@@ -77,8 +77,8 @@ Take Screenshot On Failure
 QEMS 로그인 시도
     Go To    ${URL}
     Wait For Elements State    input[type="text"]    visible    5s
-    Fill Text    input[type="text"]    ${USERNAME}
-    Fill Text    input[type="password"]    ${PASSWORD}
+    Fill Text    input[type="text"]    ${QEMS_USERNAME}
+    Fill Text    input[type="password"]    ${QEMS_PASSWORD}
     Click        text="Sign In"
     Wait For Load State    networkidle    10s
     # 로그인 성공 후 페이지 확인 예시
