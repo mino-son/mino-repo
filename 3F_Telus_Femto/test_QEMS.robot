@@ -138,8 +138,8 @@ Reboot Femto From QEMS
     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
 
     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
-    ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    abc
-    Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    abc
+    ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    ${QEMS_PASSWORD}
+    Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    ${QEMS_PASSWORD}
     Sleep    500ms
 
     # 4) OK 버튼 클릭 (표준 → 안 되면 JS로 클릭)
