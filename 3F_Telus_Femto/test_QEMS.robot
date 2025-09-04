@@ -130,5 +130,5 @@ Telus QEMS Login TakeScreenShot
     Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
 
 Reboot Femto From QEMS
-    Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984    Reboot
+    Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984    
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
