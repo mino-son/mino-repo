@@ -159,6 +159,8 @@ Reboot Femto From QEMS
     # 6) 스크린샷 & 페이지 닫기
     ${ts2}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_done_${ts2}.png    fullPage=True
+
+    Sleep    180s
     Close Page
 
 Check Cell Status In CLI
