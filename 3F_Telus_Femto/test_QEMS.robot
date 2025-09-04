@@ -69,7 +69,7 @@ Open Browser And Page
     New Page
 Open Browser And Context
     New Browser    chromium    headless=True
-    New Context    viewport={'width':1366,'height':768}
+    New Context    viewport={'width':1600,'height':900}     deviceScaleFactor=1
     New Page    
 Take Screenshot On Failure
     Run Keyword If Test Failed    Take Screenshot    fullPage=True    
@@ -125,8 +125,8 @@ Telus QEMS Login TakeScreenShot
 
 Reboot Femto From QEMS
     Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984   
-    Sleep    5s
+    Sleep    2s
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
 
-
+    Close Page
