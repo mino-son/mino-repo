@@ -129,39 +129,32 @@ Reboot Femto From QEMS
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
 
-    # 1) Reboot 버튼 클릭 (표준 → 실패 시 JS 우회)
-    Wait For Elements State    role=button[name="Reboot"]    visible    10s
-    ${clicked}=    Run Keyword And Return Status    Click    role=button[name="Reboot"]
-    IF    not ${clicked}
-        # ★ 포인터 인터셉트 우회: 자바스크립트로 직접 클릭
-        Evaluate JavaScript    selector=role=button[name="Reboot"]    script=element => element.click()
-    END
+    # 1) Reboot 버튼 JS 클릭(오버레이 우회)
+    Wait For Elements State    text="Reboot"    visible    10s
+    Evaluate Javascript    [...document.querySelectorAll('button')].find(b => b.textContent.trim()==='Reboot')?.click()
 
-    # 2) 모달 대기
-    #   (role=dialog 이 안 잡히면 css=.modal-dialog 로 통일)
-    ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    visible    3s
-    Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
+    # 2) 모달 등장 대기
+    Wait For Elements State    css=.modal-dialog    visible    5s
 
-    # 3) 비밀번호 입력
-    ${filled}=    Run Keyword And Return Status    Fill Text    role=textbox[name="Password"]    ${QEMS_PASSWORD}
+    # 3) 비밀번호 입력 (password 타입 우선, 없으면 첫 input)
+    ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    ${QEMS_PASSWORD}
     Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    ${QEMS_PASSWORD}
     Sleep    500ms
 
-    # 4) OK 버튼 클릭
-    ${ok1}=    Run Keyword And Return Status    Click    role=button[name="OK"]
-    Run Keyword If    not ${ok1}    Click    css=.modal-dialog >> text="OK"
+    # 4) OK 버튼 클릭 (표준 → 안 되면 JS)
+    ${ok1}=    Run Keyword And Return Status    Click    css=.modal-dialog >> text="OK"
+    Run Keyword If    not ${ok1}    Evaluate Javascript    [...document.querySelectorAll('.modal-dialog button')].find(b => b.textContent.trim()==='OK')?.click()
 
-    # 5) 모달 닫힘/네트워크 안정화 대기
-    ${hid}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    hidden    10s
-    Run Keyword If    not ${hid}    Wait For Elements State    css=.modal-dialog    hidden    10s
-    Wait For Load State    networkidle    10s
+    # 5) 모달 닫힘/네트워크 안정화
+    Wait For Elements State    css=.modal-dialog    hidden    3s
+    Wait For Load State    networkidle    3s
 
-    # 6) 스크린샷 & 페이지 닫기
+    # 6) 스샷 & 페이지 닫기
     ${ts2}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_done_${ts2}.png    fullPage=True
-
-    Sleep    180s
+    
     Close Page
+    Sleep    180s
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
