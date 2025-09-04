@@ -23,9 +23,6 @@ ${TIMEOUT}        10s
 ${QEMS_URL}     http://10.253.3.83:9080/login.html
 ${QEMS_USERNAME}       admin
 ${QEMS_PASSWORD}       admin
-${MENU_A_TEXT}    A            # ← 여기에 실제 A 문구
-${MENU_B_TEXT}    B            # ← 여기에 실제 B 문구 (A 클릭 후 보이는 항목)
-${MENU_C_TEXT}    C            # ← (옵션) C 문구 (B 클릭 후 보이는 항목이면)
 
 
 
@@ -128,5 +125,8 @@ Telus QEMS Login TakeScreenShot
 
 Reboot Femto From QEMS
     Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984   
-    Sleep 2s 
+    Sleep    5s
+    ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
+
+
