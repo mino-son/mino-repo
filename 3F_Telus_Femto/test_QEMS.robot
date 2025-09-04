@@ -83,19 +83,19 @@ Reboot Femto From QEMS
 
     Wait For Elements State    text="${A}"    visible    10s
     Click    text="${A}"
-    Sleep    5s
+    Sleep    3s
 
     Wait For Elements State    text="${B}"    visible    10s
     Click    text="${B}"
-    Sleep    5s
+    Sleep    3s
 
     Wait For Elements State    text="${C}"    visible    10s
     Click    text="${C}"
-    Sleep    5s
+    Sleep    3s
 
     Wait For Elements State    text="${D}"    visible    10s
     Click    text="${D}"
-    Sleep    5s
+    Sleep    3s
 
 
 *** Test Cases ***
@@ -124,7 +124,6 @@ Telus QEMS Login TakeScreenShot
     Log    TITLE=${title}
     #필요시 아래 라인을 너희 시스템 타이틀 키워드로 바꿔서 엄격 검증 가능:
     Should Contain    ${title}    QEMS
-
     
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
@@ -132,3 +131,4 @@ Telus QEMS Login TakeScreenShot
 
 Reboot Femto From QEMS
     Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984    Reboot
+    Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
