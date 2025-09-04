@@ -129,14 +129,23 @@ Reboot Femto From QEMS
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
 
-    # Reboot 버튼 클릭 → 모달 대기
+    # 1) Reboot 버튼 클릭 (표준 클릭)
     Wait For Elements State    role=button[name="Reboot"]    visible    2s
-    Click    role=button[name="Reboot"]    force=True
-    Wait For Elements State    role=dialog[name="Reboot"]    visible    2s
-    # 비밀번호 입력 후 OK
-    Fill Text    role=textbox[name="Password"]    ${QEMS_PASSWORD}
-    Sleep    1s
-    Click    role=button[name="OK"]
+    Click    role=button[name="Reboot"]    button=left
+    
+    # 2) 모달(다이얼로그) 뜰 때까지 대기
+    #    아래 셀렉터가 안 맞으면 css=.modal-dialog 로 바꿔도 됩니다.
+    Wait For Elements State    role=dialog[name="Reboot"]    visible    5s
+
+    # 3) 패스워드 입력
+    #    ARIA가 잘 매핑되면 아래가 동작합니다. 안 되면 css=.modal-dialog input[type="password"] 로 교체
+    Fill Text    role=textbox[name="Password"]    abc
+    Sleep    500ms
+
+    # 4) OK 버튼 클릭
+    Click    role=button[name="OK"]    button=left
+    # (필요 시 대안) Click    css=.modal-dialog >> text="OK"
+    
     Close Page
 
 Check Cell Status In CLI
