@@ -145,7 +145,8 @@ Reboot Femto From QEMS
     # 4) OK 버튼 클릭
     Click    role=button[name="OK"]    button=left
     # (필요 시 대안) Click    css=.modal-dialog >> text="OK"
-    
+    Sleep    200s
+
     Close Page
 
 Check Cell Status In CLI
