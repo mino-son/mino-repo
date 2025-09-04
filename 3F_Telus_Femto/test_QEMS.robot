@@ -129,4 +129,28 @@ Reboot Femto From QEMS
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot${ts}.png    fullPage=True
 
+    # Reboot 버튼 클릭 → 모달 대기
+    Wait For Elements State    role=button[name="Reboot"]    visible    2s
+    Click    role=button[name="Reboot"]    force=True
+    Wait For Elements State    role=dialog[name="Reboot"]    visible    2s
+    # 비밀번호 입력 후 OK
+    Fill Text    role=textbox[name="Password"]    ${QEMS_PASSWORD}
+    Sleep    1s
+    Click    role=button[name="OK"]
     Close Page
+
+Check Cell Status In CLI
+    Open Connection And Log In LTE 
+
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     Read Until Prompt
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections
+
+
+
+    
