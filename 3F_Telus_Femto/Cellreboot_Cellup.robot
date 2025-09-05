@@ -61,7 +61,7 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$    
+    #Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     log     ${output_status}
