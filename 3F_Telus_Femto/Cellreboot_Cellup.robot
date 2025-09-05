@@ -67,7 +67,7 @@ Cell Reboot And Reconnect
     Close all connections
 	Open Connection And Log In LTE    
     Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  
+    ${output_status}=    Read Until Prompt  strip_prompt=True 
     log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
