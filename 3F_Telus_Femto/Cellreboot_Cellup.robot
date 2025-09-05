@@ -30,12 +30,14 @@ Open Connection And Log In LTE
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
-    Set Client Configuration    prompt=#
+    #Set Client Configuration    prompt=#
+    Read Until Prompt    strip_prompt=True
 
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
     SSHLibrary.Login    root    qucell12345
-    Set Client Configuration    prompt=#
+    #Set Client Configuration    prompt=#
+    Read Until Prompt    strip_prompt=True
 
 Open Connection SecGW Core
     SSHLibrary.Open Connection    ${segw_ssh_connection_ip}
@@ -43,7 +45,8 @@ Open Connection SecGW Core
     Write    su -
     Read Until Regexp    (?i)password:
     Write    qucell12345
-    Set Client Configuration    prompt=#
+    #Set Client Configuration    prompt=#
+    Read Until Prompt    strip_prompt=True
 
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
