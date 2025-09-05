@@ -101,10 +101,11 @@ IPSEC Down
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
     Log      ${output_mme_status}
+    Sleep  600s
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
     Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
-    Sleep  600s
+    
 
 IPSEC Up & Cell up Checking
     #여기부터 문제가 된 것 같은데.. 
