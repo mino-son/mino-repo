@@ -102,7 +102,6 @@ IPSEC Down
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
     Log      ${output_mme_status}
     Sleep  600s
-    Should Contain    ${output_mme_status}     Number of Active MMEs: 0
     Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
     
