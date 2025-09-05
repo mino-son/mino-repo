@@ -67,13 +67,11 @@ Cell Reboot And Reconnect
 
 *** Test Cases ***
 
-Open Connection And Log In LTE
-
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
     Write    idm oam -x status
-    ${output_status}    =    Read Until Prompt  strip_prompt=True
+    ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
@@ -86,7 +84,7 @@ Sync Source NTP status
     
     Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$
     Write    idm oam -x syncmgrstate
-    ${output_ntp_sync}  =    Read Until Prompt  
+    ${output_ntp_sync}=    Read Until Prompt  
     log     ${output_ntp_sync}
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
