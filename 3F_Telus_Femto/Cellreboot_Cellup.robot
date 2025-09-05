@@ -35,8 +35,8 @@ Check ls Utility
 #    Set Client Configuration    prompt=REGEXP:[#$] ?$
 
 Open Connection And Log In LTE
-    Open Connection    ${cell_ssh_connection_ip}    prompt=${PROMPT_ANY}
-    Login              ${user_id}    ${user_pass}
+    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}    prompt=${PROMPT_ANY}
+    SSHLibrary.Login              ${user_id}    ${user_pass}
     Read Until Prompt    strip_prompt=True
     Write    su -
     Read Until Regexp    (?i)password:
