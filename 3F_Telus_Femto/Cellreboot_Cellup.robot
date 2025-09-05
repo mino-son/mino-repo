@@ -104,7 +104,7 @@ IPSEC Down
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
     Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
-    Sleep  2s
+    Sleep  600s
 
 IPSEC Up & Cell up Checking
     #여기부터 문제가 된 것 같은데.. 
