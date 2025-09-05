@@ -98,7 +98,7 @@ IPSEC Down
 
     Open Connection And Log In LTE  
         
-    Sleep  600s
+    Sleep  800s
     
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
@@ -113,7 +113,7 @@ IPSEC Up & Cell up Checking
     
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
-    Sleep  60s
+    Sleep  120s
     Close all connections
 
     Open Connection And Log In LTE
