@@ -72,7 +72,7 @@ Check Cell Status In CLI
 
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
-    
+
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
@@ -84,10 +84,12 @@ Check Cell Status In CLI
 
 Sync Source NTP status
     Open Connection And Log In LTE
-    
-    Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$
+
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
+        
     Write    idm oam -x syncmgrstate
-    ${output_ntp_sync}=    Read Until Prompt  
+    ${output_ntp_sync}=    Read Until Prompt  strip_prompt=True  
     log     ${output_ntp_sync}
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
