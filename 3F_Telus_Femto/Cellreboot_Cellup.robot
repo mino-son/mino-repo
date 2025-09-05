@@ -97,11 +97,12 @@ IPSEC Down
     Sleep  5s
 
     Open Connection And Log In LTE  
+        
+    Sleep  600s
     
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
     Log      ${output_mme_status}
-    Sleep  600s
     Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
     
