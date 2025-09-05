@@ -19,11 +19,12 @@ ${root_pass}                *Tkfrnrtn#!
 
 *** Keywords ***
 
-Keepalive ~14min
-    FOR    ${i}    IN RANGE    14
-        Write    echo __KA__
+Keepalive Loop Interval
+    [Arguments]    ${loops}=14    ${interval}=60 s    ${marker}=__KA__
+    FOR    ${i}    IN RANGE    ${loops}
+        Write    echo ${marker}
         Read Until Prompt    strip_prompt=True
-        Sleep    60 s
+        Sleep    ${interval}
     END
 
 Check ps Utility
@@ -71,6 +72,11 @@ Cell Reboot And Reconnect
 
 *** Test Cases ***
 
+Start Automation Test
+    Cell Reboot And Reconnect
+    Keepalive Loop Interval     6   60 s
+
+
 Check Cell Status In CLI
     Open Connection And Log In LTE 
     
@@ -104,9 +110,8 @@ IPSEC Down
     Close all connections
     Sleep  5s
 
-    Open Connection And Log In LTE  
-        
-    Keepalive ~14min
+    Open Connection And Log In LTE        
+    Keepalive Loop Interval  12  60 s 
     
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
@@ -115,13 +120,12 @@ IPSEC Down
     Close all connections
     
 
-IPSEC Up & Cell up Checking
-    #여기부터 문제가 된 것 같은데.. 
+IPSEC Up & Cell up Checking 
     Open Connection SecGW Core   
     
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
-    Sleep  120s
+    Keepalive Loop Interval  2  60 s
     Close all connections
 
     Open Connection And Log In LTE
