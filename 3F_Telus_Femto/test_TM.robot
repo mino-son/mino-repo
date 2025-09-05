@@ -5,16 +5,17 @@ Library                String
 Library                DateTime
 Library                Browser
 Library                Process
+
 *** Variables ***
-${cell_ssh_connection_ip}   172.30.100.120
-${DruidCore_ssh_connection_ip}   10.253.3.107
-${segw_ssh_connection_ip}   10.253.3.66
-${pkg_lte_name}             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
-${remote_working_path}      /tmp
-${user_id}                  tultefc
-${user_pass}                *eksvkxQkd#!
-${root_pass}                *Tkfrnrtn#!
-${TM_connection_ip}   10.253.3.199
+${cell_ssh_connection_ip}               172.30.100.120
+${DruidCore_ssh_connection_ip}          10.253.3.107
+${segw_ssh_connection_ip}               10.253.3.66
+${pkg_lte_name}                         ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
+${remote_working_path}                  /tmp
+${user_id}                              tultefc
+${user_pass}                            *eksvkxQkd#!
+${root_pass}                            *Tkfrnrtn#!
+${TM_connection_ip}                     10.253.3.199
 
 *** Keywords ***
 Check ps Utility
