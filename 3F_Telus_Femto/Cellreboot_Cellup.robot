@@ -37,12 +37,13 @@ Check ls Utility
 Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}    
     SSHLibrary.Login              ${user_id}    ${user_pass}
-    Sleep   2s
+    Set Client Configuration      prompt=REGEXP:[#>$][^\n]*$    timeout=20 s
+    Read Until Prompt             strip_prompt=True
+
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
-    Set Client Configuration    prompt=REGEXP:[#>$][^\n]*$
-    Read Until Prompt    strip_prompt=True    timeout=20 s
+    Read Until Prompt    strip_prompt=True    
     
 
 Open Connection SSH Druid Core
@@ -73,7 +74,7 @@ Check Cell Status In CLI
     Open Connection And Log In LTE 
 
     Write    idm oam -x status
-    ${output_status}    =    Read Until Prompt  strip_prompt=True   timeout=20 s
+    ${output_status}    =    Read Until Prompt  strip_prompt=True
     log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
