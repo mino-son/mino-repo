@@ -90,7 +90,7 @@ IPSEC Down
     Log     ${block_ip}
     Log to console    ${block_ip} 
     Close all connections
-    Sleep  600s
+    Sleep  5s
 
     Open Connection And Log In LTE  
     Set Client Configuration    timeout=3 s    strip_prompt=True
