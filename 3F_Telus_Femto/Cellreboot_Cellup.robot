@@ -60,7 +60,7 @@ Check Cell Status In CLI
     Set Client Configuration    timeout=3 s    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt      strip_prompt=True
-    log     Read Until Prompt
+    log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
@@ -73,7 +73,7 @@ Sync Source NTP status
     Set Client Configuration    timeout=3 s    
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt    strip_prompt=True
-    log     Read Until Prompt
+    log     ${output_ntp_sync}
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
     Close all connections
@@ -115,7 +115,7 @@ IPSEC Up & Cell up Checking
     Set Client Configuration    timeout=3 s    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True
-    log     Read Until Prompt
+    log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
