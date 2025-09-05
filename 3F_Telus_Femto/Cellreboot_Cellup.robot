@@ -6,6 +6,7 @@ Library                DateTime
 Library                Browser
 
 *** Variables ***
+${PROMPT_ANY}               REGEXP:[#$] ?$
 ${cell_ssh_connection_ip}   172.30.100.120
 ${DruidCore_ssh_connection_ip}   10.253.3.107
 ${segw_ssh_connection_ip}   10.253.3.66
@@ -24,14 +25,23 @@ Check ps Utility
 Check ls Utility
     ${ls_output}=    Execute Command    ls
 
+#Open Connection And Log In LTE
+#    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
+#    SSHLibrary.Login    ${user_id}    ${user_pass}
+#    Read Until Prompt    strip_prompt=True
+#    Write    su -
+#    Read Until Regexp    (?i)password:
+#    Write    ${root_pass}
+#    Set Client Configuration    prompt=REGEXP:[#$] ?$
+
 Open Connection And Log In LTE
-    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
-    SSHLibrary.Login    ${user_id}    ${user_pass}
+    Open Connection    ${cell_ssh_connection_ip}    prompt=${PROMPT_ANY}
+    Login              ${user_id}    ${user_pass}
     Read Until Prompt    strip_prompt=True
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
-    Set Client Configuration    prompt=REGEXP:[#$] ?$
+    Read Until Prompt    strip_prompt=True
     
 
 Open Connection SSH Druid Core
@@ -61,9 +71,9 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    #Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$    
+    Set Client Configuration    timeout=10 s
     Write    idm oam -x status
-    ${output_status}=    Read Until Prompt
+    ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
