@@ -27,6 +27,7 @@ Check ls Utility
 Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
     SSHLibrary.Login    ${user_id}    ${user_pass}
+    Read Until Prompt    strip_prompt=True
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
