@@ -58,10 +58,22 @@ Get Autocall & Check the 200OK
     ${result}=    Run Process    curl -i -H "Content-Type: application/json" -X GET "http://${TM_connection_ip}:8082/mts/mobile/autocall"    shell=True    stdout=PIPE    stderr=PIPE
     Log    ${result.stdout}
     Should Contain    ${result.stdout}    HTTP/1.1 200 OK    
+    Sleep   5s
 
-
-Start(PUT) Autocall
-    ${result}=    Run Process    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d "{\"command\":\"start\", \"logging option\":\"all scenario\"}"    shell=True    stdout=PIPE    stderr=PIPE
+Start(POST) Autocall
+    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d '${"command":"start", "logging option":"all scenario"}'
+    ${result}=    Run Process    ${cmd}    shell=True    stdout=PIPE    stderr=PIPE    timeout=120s
     Log    ${result.stdout}
-    Should Contain    ${result.stdout}    HTTP/1.1 200 OK    
+    Should Contain    ${result.stdout}    HTTP/1.1 200 OK 
+    Sleep   5s
 
+Stop(POST) Autocall
+    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d '${"command":"stop", "logging option":"all scenario"}'
+    ${result}=    Run Process    ${cmd}    shell=True    stdout=PIPE    stderr=PIPE    timeout=120s
+    Log    ${result.stdout}
+    Should Contain    ${result.stdout}    HTTP/1.1 200 OK 
+    Sleep   5s
+
+
+#curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}:8082/automation" -d "{\"Automationscenario\":\"test_automation_automation\",\"Command\":\"start\"}"
+#curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}:8082/automation" -d "{\"Automationscenario\":\"test_automation_automation\",\"Command\":\"stop\"}"
