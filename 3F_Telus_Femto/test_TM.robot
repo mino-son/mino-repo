@@ -54,7 +54,7 @@ Cell Reboot And Reconnect
 
 
 *** Test Cases ***
-Check Curl Response For 200
+Get Autocall & Check the 200OK
     ${result}=    Run Process    curl -i -H "Content-Type: application/json" -X GET "http://172.30.100.201:8082/mts/mobile/autocall"    shell=True    stdout=PIPE    stderr=PIPE
     Log    ${result.stdout}
     Should Contain    ${result.stdout}    HTTP/1.1 200 OK    
