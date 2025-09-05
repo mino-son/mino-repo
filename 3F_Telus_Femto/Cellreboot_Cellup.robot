@@ -46,7 +46,7 @@ Open Connection And Log In LTE
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
     SSHLibrary.Login    root    qucell12345
-    Set Client Configuration    prompt=REGEXP:[#$] ?$
+    Set Client Configuration    prompt=#
     
 
 Open Connection SecGW Core
@@ -55,13 +55,13 @@ Open Connection SecGW Core
     Write    su -
     Read Until Regexp    (?i)password:
     Write    qucell12345
-    Set Client Configuration    prompt=REGEXP:[#$] ?$
+    Set Client Configuration    prompt=#
     
 
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
 	Write    reboot
-	Sleep  300s
+	Sleep  200s
     Close all connections
 	Open Connection And Log In LTE    
 
@@ -70,6 +70,9 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
+    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
