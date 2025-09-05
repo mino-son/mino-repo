@@ -18,6 +18,17 @@ ${root_pass}                *Tkfrnrtn#!
 
 
 *** Keywords ***
+
+Sleep With SSH Keepalive
+    [Arguments]    ${duration}=800 s    ${interval}=60 s
+    # duration 동안 interval 주기로 하트비트 수행
+    ${loops}=    Evaluate    int(__import__("math").ceil(${duration} / ${interval}))
+    FOR    ${i}    IN RANGE    ${loops}
+        Write    echo __KA__
+        Read Until Prompt    strip_prompt=True
+        Sleep    ${interval}
+    END
+
 Check ps Utility
     ${ps_output}=    Execute Command    ps
     Should Contain    ${ps_output}    ps
@@ -98,7 +109,7 @@ IPSEC Down
 
     Open Connection And Log In LTE  
         
-    Sleep  800s
+    Sleep With SSH Keepalive    800 s    60 s
     
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
