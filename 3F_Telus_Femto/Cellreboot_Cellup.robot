@@ -42,6 +42,7 @@ Open Connection And Log In LTE
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
     Read Until Prompt    strip_prompt=True
+    Set Client Configuration    prompt=REGEXP:[#$] ?$
     
 
 Open Connection SSH Druid Core
@@ -71,7 +72,6 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    Set Client Configuration    timeout=10 s
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
