@@ -6,15 +6,14 @@ Library                DateTime
 Library                Browser
 
 *** Variables ***
-${PROMPT_ANY}               REGEXP:[#$] ?$
-${cell_ssh_connection_ip}   172.30.100.120
-${DruidCore_ssh_connection_ip}   10.253.3.107
-${segw_ssh_connection_ip}   10.253.3.66
-${pkg_lte_name}             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
-${remote_working_path}      /tmp
-${user_id}                  tultefc
-${user_pass}                *eksvkxQkd#!
-${root_pass}                *Tkfrnrtn#!
+${PROMPT_ANY}                       REGEXP:[#$] ?$
+${cell_ssh_connection_ip}           172.30.100.120
+${DruidCore_ssh_connection_ip}      10.253.3.107
+${segw_ssh_connection_ip}           10.253.3.66
+${remote_working_path}              /tmp
+${user_id}                          tultefc
+${user_pass}                        *eksvkxQkd#!
+${root_pass}                        *Tkfrnrtn#!
 
 
 *** Keywords ***
@@ -69,6 +68,13 @@ Cell Reboot And Reconnect
 	Open Connection And Log In LTE    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt  
+    log     ${output_status}
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections  
 
 *** Test Cases ***
 

@@ -4,21 +4,20 @@ Library                SCPLibrary
 Library                String
 Library                DateTime
 Library                Browser
-Suite Setup       Open Browser And Context
-Suite Teardown    Close Browser
-Test Teardown     Take Screenshot On Failure
+Suite Setup            Open Browser And Context
+Suite Teardown         Close Browser
+Test Teardown          Take Screenshot On Failure
 
 *** Variables ***
-${cell_ssh_connection_ip}   172.30.100.120
-${DruidCore_ssh_connection_ip}   10.253.3.107
-${segw_ssh_connection_ip}   10.253.3.66
-${pkg_lte_name}             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
-${remote_working_path}      /tmp
-${user_id}                  tultefc
-${user_pass}                *eksvkxQkd#!
-${root_pass}                *Tkfrnrtn#!
-${HEADLESS}       True
-${TIMEOUT}        10s
+${cell_ssh_connection_ip}           172.30.100.120
+${DruidCore_ssh_connection_ip}      10.253.3.107
+${segw_ssh_connection_ip}           10.253.3.66
+${remote_working_path}              /tmp
+${user_id}                          tultefc
+${user_pass}                        *eksvkxQkd#!
+${root_pass}                        *Tkfrnrtn#!
+${HEADLESS}                         True
+${TIMEOUT}                          10s
 
 ${QEMS_URL}     http://10.253.3.83:9080/login.html
 ${QEMS_USERNAME}       admin
