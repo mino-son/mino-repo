@@ -66,8 +66,6 @@ Cell Reboot And Reconnect
 	Sleep  200s
     Close all connections
 	Open Connection And Log In LTE    
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Read Until Prompt             strip_prompt=True
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  
     log     ${output_status}
@@ -80,7 +78,7 @@ Cell Reboot And Reconnect
 
 Start Automation Test
     Cell Reboot And Reconnect
-    Keepalive Loop Interval     6   60 s
+    Keepalive Loop Interval     10   60 s
     Close all connections
 
 
