@@ -25,15 +25,6 @@ Check ps Utility
 Check ls Utility
     ${ls_output}=    Execute Command    ls
 
-#Open Connection And Log In LTE
-#    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
-#    SSHLibrary.Login    ${user_id}    ${user_pass}
-#    Read Until Prompt    strip_prompt=True
-#    Write    su -
-#    Read Until Regexp    (?i)password:
-#    Write    ${root_pass}
-#    Set Client Configuration    prompt=REGEXP:[#$] ?$
-
 Open Connection And Log In LTE
     SSHLibrary.Open Connection    ${cell_ssh_connection_ip}    
     SSHLibrary.Login              ${user_id}    ${user_pass}
@@ -41,13 +32,15 @@ Open Connection And Log In LTE
     Read Until Regexp    (?i)password:
     Write    ${root_pass}
     Set Client Configuration    prompt=#    
-    
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
 
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
     SSHLibrary.Login    root    qucell12345
     Set Client Configuration    prompt=#
-    
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
 
 Open Connection SecGW Core
     SSHLibrary.Open Connection    ${segw_ssh_connection_ip}
@@ -56,7 +49,8 @@ Open Connection SecGW Core
     Read Until Regexp    (?i)password:
     Write    qucell12345
     Set Client Configuration    prompt=#
-    
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
 
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
@@ -64,15 +58,14 @@ Cell Reboot And Reconnect
 	Sleep  200s
     Close all connections
 	Open Connection And Log In LTE    
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
 
 *** Test Cases ***
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
-
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Read Until Prompt             strip_prompt=True
-
+    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
@@ -84,9 +77,6 @@ Check Cell Status In CLI
 
 Sync Source NTP status
     Open Connection And Log In LTE
-
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Read Until Prompt             strip_prompt=True
         
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt  strip_prompt=True  
@@ -97,24 +87,20 @@ Sync Source NTP status
 
 
 IPSEC Down
-    Open Connection SSH Druid Core
     Open Connection SecGW Core
-    
-    Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$    
+
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
-    ${block_ip}=    Read Until Prompt   
+    ${block_ip}=    Read Until Prompt  strip_prompt=True    
     Log     ${block_ip}
-    Log to console    ${block_ip} 
     Close all connections
     Sleep  5s
 
     Open Connection And Log In LTE  
-    Set Client Configuration    timeout=10 s    prompt=REGEXP:[#$] ?$    
+    
     Write    idm oam -x status
-    ${output_mme_status}=    Read Until Prompt  
+    ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
     Log      ${output_mme_status}
-    Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
     Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
@@ -123,13 +109,14 @@ IPSEC Down
 IPSEC Up & Cell up Checking
     #여기부터 문제가 된 것 같은데.. 
     Open Connection SecGW Core   
+    
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
     Sleep  60s
     Close all connections
 
-    Open Connection And Log In LTE 
-    Set Client Configuration    timeout=3 s  prompt=REGEXP:[#$] ?$    
+    Open Connection And Log In LTE
+    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  
     log     ${output_status}
