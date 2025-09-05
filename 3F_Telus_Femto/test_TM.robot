@@ -62,14 +62,14 @@ Get Autocall & Check the 200OK
     Sleep   5s
 
 Start(POST) Autocall
-    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d '{"command":"start", "logging option":"all scenario"}'
+    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}:8082/mts/mobile/autocall" -d '{"command":"start", "logging option":"all scenario"}'
     ${result}=    Run Process    ${cmd}    shell=True    stdout=PIPE    stderr=PIPE    timeout=120s
     Log    ${result.stdout}
     Should Contain    ${result.stdout}    HTTP/1.1 200 OK 
     Sleep   5s
 
 Stop(POST) Autocall
-    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d '{"command":"stop", "logging option":"all scenario"}'
+    ${cmd}=    Set Variable    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}:8082/mts/mobile/autocall" -d '{"command":"stop", "logging option":"all scenario"}'
     ${result}=    Run Process    ${cmd}    shell=True    stdout=PIPE    stderr=PIPE    timeout=120s
     Log    ${result.stdout}
     Should Contain    ${result.stdout}    HTTP/1.1 200 OK 
