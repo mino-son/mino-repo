@@ -5,6 +5,7 @@ Library                String
 Library                DateTime
 Library                Browser
 
+
 *** Variables ***
 ${PROMPT_ANY}                       REGEXP:[#$] ?$
 ${cell_ssh_connection_ip}           172.30.100.120
@@ -17,7 +18,6 @@ ${root_pass}                        *Tkfrnrtn#!
 
 
 *** Keywords ***
-
 Keepalive Loop Interval
     [Arguments]    ${loops}=14    ${interval}=60 s    ${marker}=__KA__
     FOR    ${i}    IN RANGE    ${loops}
@@ -81,6 +81,7 @@ Cell Reboot And Reconnect
 Start Automation Test
     Cell Reboot And Reconnect
     Keepalive Loop Interval     6   60 s
+    Close all connections
 
 
 Check Cell Status In CLI
