@@ -57,9 +57,9 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    Set Client Configuration    timeout=3 s    strip_prompt=True
+    Set Client Configuration    timeout=3 s    
     Write    idm oam -x status
-    ${output_status}=    Read Until Prompt
+    ${output_status}=    Read Until Prompt      strip_prompt=True
     log     Read Until Prompt
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
@@ -70,9 +70,9 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
-    Set Client Configuration    timeout=3 s    strip_prompt=True
+    Set Client Configuration    timeout=3 s    
     Write    idm oam -x syncmgrstate
-    ${output_ntp_sync}=    Read Until Prompt
+    ${output_ntp_sync}=    Read Until Prompt    strip_prompt=True
     log     Read Until Prompt
     Should Contain    ${output_ntp_sync}    NTP Sync State
     Should Contain    ${output_ntp_sync}    LOCKED
@@ -83,19 +83,19 @@ IPSEC Down
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
-    Set Client Configuration    timeout=3 s    strip_prompt=True
+    Set Client Configuration    timeout=3 s    
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
-    ${block_ip}=    Read Until Prompt
+    ${block_ip}=    Read Until Prompt   strip_prompt=True
     Log     ${block_ip}
     Log to console    ${block_ip} 
     Close all connections
     Sleep  5s
 
     Open Connection And Log In LTE  
-    Set Client Configuration    timeout=3 s    strip_prompt=True
+    Set Client Configuration    timeout=3 s    
     Write    idm oam -x status
-    ${output_mme_status}=    Read Until Prompt
+    ${output_mme_status}=    Read Until Prompt  strip_prompt=True
     Log      ${output_mme_status}
     Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
@@ -112,9 +112,9 @@ IPSEC Up & Cell up Checking
     Close all connections
 
     Open Connection And Log In LTE 
-    Set Client Configuration    timeout=3 s    strip_prompt=True
+    Set Client Configuration    timeout=3 s    
     Write    idm oam -x status
-    ${output_status}=    Read Until Prompt
+    ${output_status}=    Read Until Prompt  strip_prompt=True
     log     Read Until Prompt
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
