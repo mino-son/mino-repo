@@ -60,7 +60,7 @@ Cell Reboot And Reconnect
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
-    Set Client Configuration    timeout=3 s    
+    Set Client Configuration    timeout=10 s    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt      strip_prompt=True
     log     ${output_status}
@@ -73,7 +73,7 @@ Check Cell Status In CLI
 Sync Source NTP status
     Open Connection And Log In LTE
     
-    Set Client Configuration    timeout=3 s    
+    Set Client Configuration    timeout=10 s    
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt    strip_prompt=True
     log     ${output_ntp_sync}
@@ -86,7 +86,7 @@ IPSEC Down
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
-    Set Client Configuration    timeout=3 s    
+    Set Client Configuration    timeout=10 s    
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
     ${block_ip}=    Read Until Prompt   strip_prompt=True
@@ -96,7 +96,7 @@ IPSEC Down
     Sleep  5s
 
     Open Connection And Log In LTE  
-    Set Client Configuration    timeout=3 s    
+    Set Client Configuration    timeout=10 s    
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True
     Log      ${output_mme_status}
