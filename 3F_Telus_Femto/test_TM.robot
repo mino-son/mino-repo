@@ -61,7 +61,7 @@ Get Autocall & Check the 200OK
 
 
 Start(PUT) Autocall
-    ${result}=    Run Process    curl -i -H "Content-Type: application/json" -X GET "http://${TM_connection_ip}:8082/mts/mobile/autocall"    shell=True    stdout=PIPE    stderr=PIPE
+    ${result}=    Run Process    curl -i -H "Content-Type: application/json" -X POST "http://${TM_connection_ip}/mts/mobile/autocall" -d "{\"command\":\"start\", \"logging option\":\"all scenario\"}"    shell=True    stdout=PIPE    stderr=PIPE
     Log    ${result.stdout}
     Should Contain    ${result.stdout}    HTTP/1.1 200 OK    
 
