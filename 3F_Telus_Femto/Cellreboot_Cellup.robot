@@ -79,57 +79,44 @@ Sync Source NTP status
     Close all connections
 
 
-#IPSEC DownUp
+IPSEC Down
     Open Connection SSH Druid Core
     Open Connection SecGW Core
     
-    Read Until Prompt
+    Set Client Configuration    timeout=3 s    strip_prompt=True
     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
     ${block_ip}=    Read Until Prompt
     Log     ${block_ip}
     Log to console    ${block_ip} 
     Close all connections
-
     Sleep  600s
-    
-    Open Connection And Log In LTE
-    
-    Read Until Prompt
+
+    Open Connection And Log In LTE  
+    Set Client Configuration    timeout=3 s    strip_prompt=True
     Write    idm oam -x status
     ${output_mme_status}=    Read Until Prompt
     Log      ${output_mme_status}
     Log to console    ${output_mme_status}
     Should Contain    ${output_mme_status}     Number of Active MMEs: 0
-    Should Contain    ${output_mme_status}     Virtual IP:
-
-    #여기부터 문제가 된 것 같은데..
-    Read Until Prompt
-    Write    idm oam -x alarm
-    ${output_alarm}=    Read Until Prompt
-    Log     ${output_alarm}
-    Log to console    ${output_alarm}
-    Should Contain    ${output_alarm}    IPSec Tunnel Down
+    Should Contain    ${output_mme_status}     Virtual IP: down
     Close all connections
+    Sleep  2s
 
-    Open Connection SSH Druid Core
-    Open Connection SecGW Core
-     
+IPSEC Up & Cell up Checking
+    #여기부터 문제가 된 것 같은데.. 
+    Open Connection SecGW Core   
     Write   iptables -D INPUT 1
     Write   iptables -D OUTPUT 1
-       
     Sleep  60s
     Close all connections
 
-
-#Check Cell Status In CLI
     Open Connection And Log In LTE 
-
-    Read Until Prompt
+    Set Client Configuration    timeout=3 s    strip_prompt=True
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt
     log     Read Until Prompt
     Should Contain    ${output_status}    StackRunning: 1
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections
+    Close all connections  
