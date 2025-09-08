@@ -89,6 +89,21 @@ Reboot Femto From QEMS
     Click    text="${C}"
     Sleep    3s
 
+FactoryReset Femto From QEMS
+    [Arguments]    ${A}    ${B}    ${C} 
+    Wait For Load State    networkidle    10s
+
+    Wait For Elements State    text="${A}"    visible    10s
+    Click    text="${A}"
+    Sleep    3s
+
+    Wait For Elements State    text="${B}"    visible    10s
+    Click    text="${B}"
+    Sleep    3s
+
+    Wait For Elements State    text="${C}"    visible    10s
+    Click    text="${C}"
+    Sleep    3s
 
 
 *** Test Cases ***
@@ -122,18 +137,66 @@ Telus QEMS Login TakeScreenShot
     Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
     Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
 
-Reboot Femto From QEMS
-    Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
+# Reboot Femto From QEMS
+#     Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
+#     Sleep    2s
+#     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
+#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
+
+#     # 1) Reboot 버튼: 요소를 셀렉터로 잡고, 그 요소에 el.click() 실행
+#     Wait For Elements State    role=button[name="Reboot"]    visible    10s
+#     Evaluate JavaScript    role=button[name="Reboot"]    el => el.click()
+
+#     # 2) 모달 등장 대기 (role이 안 잡히면 css=.modal-dialog 사용)
+#     ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    visible    3s
+#     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
+
+#     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
+#     ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    ${QEMS_PASSWORD}
+#     Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    ${QEMS_PASSWORD}
+#     Sleep    500ms
+
+#     # 4) OK 버튼 클릭 (표준 → 안 되면 JS로 클릭)
+#     ${ok1}=    Run Keyword And Return Status    Click    css=.modal-dialog >> text="OK"
+#     Run Keyword If    not ${ok1}    Evaluate JavaScript    css=.modal-dialog button    els => { const b=[...els]; const t=b.find(e=>e.textContent.trim()==='OK'); if(t) t.click(); }
+
+#     # 5) 모달 닫힘/안정화
+#     ${hid}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    hidden    10s
+#     Run Keyword If    not ${hid}    Wait For Elements State    css=.modal-dialog    hidden    10s
+#     Wait For Load State    networkidle    10s
+
+#     # 6) 스샷 & 페이지 닫기
+#     ${ts2}=    Get Current Date    result_format=%Y%m%d-%H%M%S
+#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_done_${ts2}.png    fullPage=True
+#     Close Page
+#     Sleep    180s
+
+Check Cell Status In CLI
+    Open Connection And Log In LTE 
+
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     Read Until Prompt
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections
+
+
+    
+FactoryReset Femto From QEMS
+    FactoryReset Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
     Sleep    2s
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
 
     # 1) Reboot 버튼: 요소를 셀렉터로 잡고, 그 요소에 el.click() 실행
-    Wait For Elements State    role=button[name="Reboot"]    visible    10s
-    Evaluate JavaScript    role=button[name="Reboot"]    el => el.click()
+    Wait For Elements State    role=button[name="Factory Reset"]    visible    10s
+    Evaluate JavaScript    role=button[name="Factory Reset"]    el => el.click()
 
     # 2) 모달 등장 대기 (role이 안 잡히면 css=.modal-dialog 사용)
-    ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    visible    3s
+    ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Factory Reset"]    visible    3s
     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
 
     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
@@ -156,6 +219,8 @@ Reboot Femto From QEMS
     Close Page
     Sleep    180s
 
+
+
 Check Cell Status In CLI
     Open Connection And Log In LTE 
 
@@ -167,7 +232,3 @@ Check Cell Status In CLI
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
     Close all connections
-
-
-
-    

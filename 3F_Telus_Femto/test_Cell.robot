@@ -121,6 +121,11 @@ IPSEC Down
     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
     Log      ${output_mme_status}
     Should Contain    ${output_mme_status}     Virtual IP: down
+
+    Write    idm oam -x alarm
+    ${output_alarm_status}=    Read Until Prompt  strip_prompt=True   
+    Log      ${output_alarm_status}
+    Should Contain    ${output_mme_status}     IPsec
     Close all connections
     
 
