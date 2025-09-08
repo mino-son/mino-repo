@@ -75,6 +75,8 @@ Cell Reboot And Reconnect
 
 Start Automation Test_initial Cell Settings
     Cell Reboot And Reconnect
+
+    Open Connection And Log In LTE
     Keepalive Loop Interval     5   60 s
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True 
