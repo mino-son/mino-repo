@@ -103,7 +103,8 @@ Check Cell Status In CLI
 
 Sync Source NTP status
     Open Connection And Log In LTE
-        
+
+    Sleep 1200s    
     Write    idm oam -x syncmgrstate
     ${output_ntp_sync}=    Read Until Prompt  strip_prompt=True  
     log     ${output_ntp_sync}
