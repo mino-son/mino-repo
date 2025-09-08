@@ -63,7 +63,7 @@ Open Connection SecGW Core
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
 	Write    reboot
-	
+	Keepalive Loop Interval     5   60 s 
     Close all connections
 	Open Connection And Log In LTE
     Keepalive Loop Interval     5   60 s    
@@ -77,7 +77,7 @@ Cell Reboot And Reconnect
 Start Automation Test_initial Cell Settings
     Cell Reboot And Reconnect
     Close all connections  
-    
+
     Open Connection And Log In LTE
     Keepalive Loop Interval     5   60 s
     Write    idm oam -x status
