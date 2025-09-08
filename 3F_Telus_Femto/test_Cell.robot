@@ -63,9 +63,10 @@ Open Connection SecGW Core
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
 	Write    reboot
-	Keepalive Loop Interval     5   60 s
+	
     Close all connections
-	Open Connection And Log In LTE    
+	Open Connection And Log In LTE
+    Keepalive Loop Interval     5   60 s    
     Set Client Configuration    prompt=#
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
