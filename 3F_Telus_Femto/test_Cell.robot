@@ -63,23 +63,19 @@ Open Connection SecGW Core
 Cell Reboot And Reconnect
     Open Connection And Log In LTE
 	Write    reboot
-	Sleep  200s
+	Keepalive Loop Interval     5   60 s
     Close all connections
 	Open Connection And Log In LTE    
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  strip_prompt=True 
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections  
+    Set Client Configuration    prompt=#
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Read Until Prompt             strip_prompt=True
+    
 
 *** Test Cases ***
 
-Start Automation Test
+Start Automation Test_initial Cell Settings
     Cell Reboot And Reconnect
-    Open Connection And Log In LTE
-    Keepalive Loop Interval     10   60 s
+    
     Write    idm oam -x status
     ${output_status}=    Read Until Prompt  strip_prompt=True 
     log     ${output_status}
@@ -87,7 +83,6 @@ Start Automation Test
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
     Close all connections  
-    
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
