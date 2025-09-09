@@ -110,7 +110,6 @@ LTE ToD Sync ≤60s (Epoch)
 
     Set Test Message   ToD=${clean_output}
 
-
 Check Cell Status In CLI
     Open Connection And Log In LTE 
     
