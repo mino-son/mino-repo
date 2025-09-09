@@ -82,8 +82,8 @@ Cell Reboot And Reconnect
 
 
 LTE ToD Sync ≤60s (Epoch)
-    [Documentation]    장비 vs 호스트 epoch 차이가 60초 이내 & ToD Synchronized 확인
-    [Tags]    time    ntp
+    [Documentation]    ToD Synchronized 동작 확인
+    [Tags]    PnP    
     Open Connection And Log In LTE
     Write    date +%s
     ${buf}=    Read Until Prompt    strip_prompt=True
@@ -97,8 +97,19 @@ LTE ToD Sync ≤60s (Epoch)
     ${output_device_time}=    Read Until Prompt  strip_prompt=True
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
+
+    [Arguments]    ${output_device_time}
+    # (옵션) ANSI 잔여 토큰 제거: ESC 시퀀스/ [1m … [m 같은 것들
+    ${clean}=    Replace String Using Regexp    ${output_device_time}    \x1B\[[0-9;]*[A-Za-z]    ${EMPTY}
+    ${clean}=    Replace String Using Regexp    ${clean}    \[[0-9;]*m    ${EMPTY}
+
+    ${matches}=    Get Regexp Matches    ${clean}    (?m)(?<=-\s*Status\s*=\s*)[^\r\n]+
+    Should Not Be Empty    ${matches}
+    ${status}=     Set Variable    ${matches[0]}
+    [Return]       ${status}
+
     
-    Set Test Message    Check the ToD status (${output_device_time})
+    Set Test Message   Check the ToD status     (${status})
 
 
 Check Cell Status In CLI
