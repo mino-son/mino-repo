@@ -107,7 +107,7 @@ LTE ToD Sync ≤60s (Epoch)
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
     
-    Set Test Message   ToD=${status},     Δ=${delta}s
+    Set Test Message   ToD=${output_device_time},     Δ=${delta}s
 
 
 Check Cell Status In CLI
