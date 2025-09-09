@@ -106,8 +106,9 @@ LTE ToD Sync ≤60s (Epoch)
     ${output_device_time}=    Read Until Prompt  strip_prompt=True
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
-    
-    Set Test Message   ToD=${output_device_time},     Δ=${delta}s
+    ${clean_output}=    Replace String Using Regexp    ${output_device_time}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+
+    Set Test Message   ToD=${clean_output}
 
 
 Check Cell Status In CLI
