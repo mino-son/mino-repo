@@ -81,34 +81,18 @@ Cell Reboot And Reconnect
 #     Close all connections  
 
 
-LTE Check ToD Sync Within 60s (KST)
+LTE ToD Sync ≤60s (KST, Simple)
     Open Connection And Log In LTE
-
-    # 1) 시간 출력 (따옴표 OK, 네 장비 기준)
     Write    TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S'
     ${buf}=    Read Until Prompt    strip_prompt=True
-    Log    RAW_FROM_DEVICE:\n${buf}
-
-    # 2) (옵션) ANSI 색상/제어코드 제거
-    ${buf}=    Replace String Using Regexp    ${buf}    \x1B\[[0-9;]*[A-Za-z]    ${EMPTY}
-
-    # 3) '#'(프롬프트/에코)로 시작하는 줄은 제외하고, 시간 줄만 추출
-    #    - 캡처 괄호 없음 → ${matches[0]} 가 순수 문자열
-    ${matches}=    Get Regexp Matches    ${buf}    (?m)^(?!#)\s*\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s*$
-    Should Not Be Empty    ${matches}
-    ${lte_full}=    Strip String    ${matches[0]}
-    Log    lte_full=${lte_full}
-
-    # 4) 로컬(KST) 시각과 비교
-    ${robot_full}=    Get Current Date    tz=Asia/Seoul    result_format=%Y-%m-%d %H:%M:%S
-    Log    robot_full=${robot_full}
-
-    ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
-    ${robot_epoch}=    Convert Date    ${robot_full}    result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
+    ${m}=      Get Regexp Matches    ${buf}    (\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})
+    Should Not Be Empty    ${m}
+    ${lte}=    Set Variable    ${m[0]}
+    ${robot}=  Get Current Date    tz=Asia/Seoul    result_format=%Y-%m-%d %H:%M:%S
+    ${lte_epoch}=      Convert Date    ${lte}     result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
+    ${robot_epoch}=    Convert Date    ${robot}   result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
     ${delta}=          Evaluate    abs(${lte_epoch} - ${robot_epoch})
-    Log    delta_seconds=${delta}
-
-    Should Be True    ${delta} <= 60
+    Should Be True     ${delta} <= 60
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
