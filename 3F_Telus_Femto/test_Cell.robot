@@ -82,6 +82,8 @@ Cell Reboot And Reconnect
 
 
 LTE ToD Sync ≤60s (Epoch)
+    [Documentation]    장비 vs 호스트 epoch 차이가 60초 이내 & ToD Synchronized 확인
+    [Tags]    time    ntp
     Open Connection And Log In LTE
     Write    date +%s
     ${buf}=    Read Until Prompt    strip_prompt=True
@@ -95,6 +97,8 @@ LTE ToD Sync ≤60s (Epoch)
     ${output_device_time}=    Read Until Prompt  strip_prompt=True
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
+    
+    Set Test Message    Check the ToD status (${output_device_time})
 
 
 Check Cell Status In CLI
