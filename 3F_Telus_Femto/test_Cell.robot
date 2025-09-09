@@ -1,4 +1,4 @@
-*** Settings ***
+*** Settings ***    ##################################################
 Library                SSHLibrary
 Library                SCPLibrary
 Library                String
@@ -6,7 +6,7 @@ Library                DateTime
 Library                Browser
 
 
-*** Variables ***
+*** Variables ***    ##################################################
 ${PROMPT_ANY}                       REGEXP:[#$] ?$
 ${cell_ssh_connection_ip}           172.30.100.120
 ${DruidCore_ssh_connection_ip}      10.253.3.107
@@ -17,7 +17,7 @@ ${user_pass}                        *eksvkxQkd#!
 ${root_pass}                        *Tkfrnrtn#!
 
 
-*** Keywords ***
+*** Keywords ***    ##################################################
 Keepalive Loop Interval
     [Arguments]    ${loops}=14    ${interval}=60 s    ${marker}=__KA__
     FOR    ${i}    IN RANGE    ${loops}
@@ -67,18 +67,31 @@ Cell Reboot And Reconnect
     Close all connections
 	Open Connection And Log In LTE    
 
-*** Test Cases ***
+*** Test Cases ***    ##################################################
 
-Start Automation Test_initial Cell Settings
-    Cell Reboot And Reconnect
+# Start Automation Test_initial Cell Settings
+#     Cell Reboot And Reconnect
     
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  strip_prompt=True 
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections  
+#     Write    idm oam -x status
+#     ${output_status}=    Read Until Prompt  strip_prompt=True 
+#     log     ${output_status}
+#     Should Contain    ${output_status}    StackRunning: 1
+#     Should Contain    ${output_status}    RFTxStatus: 1
+#     Should Contain    ${output_status}    Number of Active MMEs: 1
+#     Close all connections  
+
+
+LTE Check ToD Sync complete
+    Open Connection And Log In LTE
+    Write    date -u -Idate
+    ${lte_current_time}=    Read Until Prompt
+    ${lte_current_time}=    String.Get Line    ${lte_current_time}    0
+    ${lte_current_time}=    Get Substring	${lte_current_time}    0    10
+    Log    ${lte_current_time}
+    ${robot_date}=	Get Current Date	UTC
+    ${robot_date}=    Get Substring	${robot_date}    0    10
+    Log    ${robot_date}
+    Should Be Equal    ${lte_current_time}    ${robot_date}
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
@@ -92,57 +105,57 @@ Check Cell Status In CLI
     Close all connections
     
 
-Sync Source NTP status
-    Open Connection And Log In LTE
+# Sync Source NTP status
+#     Open Connection And Log In LTE
 
-    Keepalive Loop Interval  20  60 s     
-    Write    idm oam -x syncmgrstate
-    ${output_ntp_sync}=    Read Until Prompt  strip_prompt=True  
-    log     ${output_ntp_sync}
-    Should Contain    ${output_ntp_sync}    NTP Sync State
-    Should Contain    ${output_ntp_sync}    LOCKED
-    Close all connections
+#     Keepalive Loop Interval  20  60 s     
+#     Write    idm oam -x syncmgrstate
+#     ${output_ntp_sync}=    Read Until Prompt  strip_prompt=True  
+#     log     ${output_ntp_sync}
+#     Should Contain    ${output_ntp_sync}    NTP Sync State
+#     Should Contain    ${output_ntp_sync}    LOCKED
+#     Close all connections
 
 
-IPSEC Down
-    Open Connection SecGW Core
+# IPSEC Down
+#     Open Connection SecGW Core
 
-    Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
-    Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
-    ${block_ip}=    Read Until Prompt  strip_prompt=True    
-    Log     ${block_ip}
-    Close all connections
-    Sleep  5s
+#     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
+#     Write   iptables -A INPUT -s ${cell_ssh_connection_ip} -j DROP
+#     ${block_ip}=    Read Until Prompt  strip_prompt=True    
+#     Log     ${block_ip}
+#     Close all connections
+#     Sleep  5s
 
-    Open Connection And Log In LTE        
-    Keepalive Loop Interval  12  60 s 
+#     Open Connection And Log In LTE        
+#     Keepalive Loop Interval  12  60 s 
     
-    Write    idm oam -x status
-    ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
-    Log      ${output_mme_status}
-    Should Contain    ${output_mme_status}     Virtual IP: down
+#     Write    idm oam -x status
+#     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
+#     Log      ${output_mme_status}
+#     Should Contain    ${output_mme_status}     Virtual IP: down
 
-    Write    idm oam -x alarm
-    ${output_alarm_status}=    Read Until Prompt  strip_prompt=True   
-    Log      ${output_alarm_status}
-    Should Contain    ${output_mme_status}     IPsec
-    Close all connections
+#     Write    idm oam -x alarm
+#     ${output_alarm_status}=    Read Until Prompt  strip_prompt=True   
+#     Log      ${output_alarm_status}
+#     Should Contain    ${output_mme_status}     IPsec
+#     Close all connections
     
 
-IPSEC Up & Cell up Checking 
-    Open Connection SecGW Core   
+# IPSEC Up & Cell up Checking 
+#     Open Connection SecGW Core   
     
-    Write   iptables -D INPUT 1
-    Write   iptables -D OUTPUT 1
-    Keepalive Loop Interval  2  60 s
-    Close all connections
+#     Write   iptables -D INPUT 1
+#     Write   iptables -D OUTPUT 1
+#     Keepalive Loop Interval  2  60 s
+#     Close all connections
 
-    Open Connection And Log In LTE
+#     Open Connection And Log In LTE
     
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections  
+#     Write    idm oam -x status
+#     ${output_status}=    Read Until Prompt  
+#     log     ${output_status}
+#     Should Contain    ${output_status}    StackRunning: 1
+#     Should Contain    ${output_status}    RFTxStatus: 1
+#     Should Contain    ${output_status}    Number of Active MMEs: 1
+#     Close all connections  

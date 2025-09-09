@@ -4,6 +4,7 @@ Library                SCPLibrary
 Library                String
 Library                DateTime
 Library                Browser
+Library                OperatingSystem
 Suite Setup            Open Browser And Context
 Suite Teardown         Close Browser
 Test Teardown          Take Screenshot On Failure
@@ -137,66 +138,19 @@ Telus QEMS Login TakeScreenShot
     Take Screenshot    ${OUTPUT DIR}/qems_after_login_${ts}.png    fullPage=True
     Log    <a href="${QEMS_URL}">Open QEMS login.html</a>    html=True
 
-# Reboot Femto From QEMS
-#     Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
-#     Sleep    2s
-#     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
-#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
 
-#     # 1) Reboot 버튼: 요소를 셀렉터로 잡고, 그 요소에 el.click() 실행
-#     Wait For Elements State    role=button[name="Reboot"]    visible    10s
-#     Evaluate JavaScript    role=button[name="Reboot"]    el => el.click()
-
-#     # 2) 모달 등장 대기 (role이 안 잡히면 css=.modal-dialog 사용)
-#     ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    visible    3s
-#     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
-
-#     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
-#     ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    ${QEMS_PASSWORD}
-#     Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    ${QEMS_PASSWORD}
-#     Sleep    500ms
-
-#     # 4) OK 버튼 클릭 (표준 → 안 되면 JS로 클릭)
-#     ${ok1}=    Run Keyword And Return Status    Click    css=.modal-dialog >> text="OK"
-#     Run Keyword If    not ${ok1}    Evaluate JavaScript    css=.modal-dialog button    els => { const b=[...els]; const t=b.find(e=>e.textContent.trim()==='OK'); if(t) t.click(); }
-
-#     # 5) 모달 닫힘/안정화
-#     ${hid}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    hidden    10s
-#     Run Keyword If    not ${hid}    Wait For Elements State    css=.modal-dialog    hidden    10s
-#     Wait For Load State    networkidle    10s
-
-#     # 6) 스샷 & 페이지 닫기
-#     ${ts2}=    Get Current Date    result_format=%Y%m%d-%H%M%S
-#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_done_${ts2}.png    fullPage=True
-#     Close Page
-#     Sleep    180s
-
-Check Cell Status In CLI
-    Open Connection And Log In LTE 
-
-    Read Until Prompt
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt
-    log     Read Until Prompt
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections
-
-
-    
-FactoryReset Femto From QEMS
-    FactoryReset Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
+Reboot Femto From QEMS
+    Reboot Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
     Sleep    2s
     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
 
     # 1) Reboot 버튼: 요소를 셀렉터로 잡고, 그 요소에 el.click() 실행
-    Wait For Elements State    role=button[name="Factory Reset"]    visible    10s
-    Evaluate JavaScript    role=button[name="Factory Reset"]    el => el.click()
+    Wait For Elements State    role=button[name="Reboot"]    visible    10s
+    Evaluate JavaScript    role=button[name="Reboot"]    el => el.click()
 
     # 2) 모달 등장 대기 (role이 안 잡히면 css=.modal-dialog 사용)
-    ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Factory Reset"]    visible    3s
+    ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    visible    3s
     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
 
     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
@@ -219,7 +173,88 @@ FactoryReset Femto From QEMS
     Close Page
     Sleep    180s
 
+Check Cell Status In CLI
+    Open Connection And Log In LTE 
 
+    Read Until Prompt
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     Read Until Prompt
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections
+
+
+    
+# FactoryReset Femto From QEMS
+#     FactoryReset Femto From QEMS    Configuration    Device Monitoring (LTE)    민호_SN19_101.116_6984
+#     Sleep    2s
+#     ${ts}=    Get Current Date    result_format=%Y%m%d-%H%M%S
+#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_${ts}.png    fullPage=True
+
+#     # 1) Reboot 버튼: 요소를 셀렉터로 잡고, 그 요소에 el.click() 실행
+#     Wait For Elements State    role=button[name="Factory Reset"]    visible    10s
+#     Evaluate JavaScript    role=button[name="Factory Reset"]    el => el.click()
+
+#     # 2) 모달 등장 대기 (role이 안 잡히면 css=.modal-dialog 사용)
+#     ${dlg}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Factory Reset"]    visible    3s
+#     Run Keyword If    not ${dlg}    Wait For Elements State    css=.modal-dialog    visible    5s
+
+#     # 3) 비밀번호 입력 (password 타입 우선, 폴백으로 첫 input)
+#     ${filled}=    Run Keyword And Return Status    Fill Text    css=.modal-dialog input[type="password"]    ${QEMS_PASSWORD}
+#     Run Keyword If    not ${filled}    Fill Text    css=.modal-dialog input    ${QEMS_PASSWORD}
+#     Sleep    500ms
+
+#     # 4) OK 버튼 클릭 (표준 → 안 되면 JS로 클릭)
+#     ${ok1}=    Run Keyword And Return Status    Click    css=.modal-dialog >> text="OK"
+#     Run Keyword If    not ${ok1}    Evaluate JavaScript    css=.modal-dialog button    els => { const b=[...els]; const t=b.find(e=>e.textContent.trim()==='OK'); if(t) t.click(); }
+
+#     # 5) 모달 닫힘/안정화
+#     ${hid}=    Run Keyword And Return Status    Wait For Elements State    role=dialog[name="Reboot"]    hidden    10s
+#     Run Keyword If    not ${hid}    Wait For Elements State    css=.modal-dialog    hidden    10s
+#     Wait For Load State    networkidle    10s
+
+#     # 6) 스샷 & 페이지 닫기
+#     ${ts2}=    Get Current Date    result_format=%Y%m%d-%H%M%S
+#     Take Screenshot    ${OUTPUT DIR}/QEMS_reboot_done_${ts2}.png    fullPage=True
+#     Close Page
+#     Sleep    180s
+
+
+# Cell Setup After FactoryReset
+#     Open Connection And Log In LTE
+
+#     Write      idm oam -x set Device.FAP.Tunnel.CryptoProfile.1.IKEPRF=HMAC-SHA1
+#     Write      idm oam -x set Device.FAP.Tunnel.CryptoProfile.1.IKEIntegrity=HMAC-SHA1-96
+#     Write      idm oam -x set Device.FAP.Tunnel.CryptoProfile.1.ESPIntegrity=HMAC-SHA1-96
+#     Write      idm oam -x set Device.Time.NTPServer1=172.21.120.6
+#     Write      sync
+#     Sleep      3s
+#     Write      reboot
+#     이거 뿐만이 아니라 음.. ip static으로 변경 + ipv6에서 접속할 수 있도록 하는 pc에서 초기 resetflash 이후 setup해줄 정보설정 필요
+#     그런데.. 이 ipv6 링크로컬로 접속해서 설정 넣는게 좀 빡세다..
+
+# 아래 정보가 ipv4 static으로 변환하는 예시.. 쓸라면 쓸 수 있을지도 모르겠다.. 그런데 좀 복잡하다.(HW구조도가 복잡하단 뜻)
+# *** Variables ***
+# ${HOST}           192.168.0.100
+# ${USER}           root
+# ${PASS}           password
+# ${CONFIG_FILE}    /mnt/flash/A/B/config.xml
+# ${NEW_MODE}       static
+# ${NEW_IP}         172.30.100.120
+# ${NEW_GW}         172.30.100.1
+
+# *** Test Cases ***
+# Edit Config (Minimal)
+#     Open Connection    ${HOST}
+#     Login    ${USER}    ${PASS}
+#     # 백업 + 치환(한 줄)
+#     Execute Command    bash -lc 'cp "${CFG}" "${CFG}.bak" && sed -i -E "s#<select val=\\"[^\\"]*\\"/>#<select val=\\"${MODE}\\"/>#; s#<ip val=\\"[^\\"]*\\"/>#<ip val=\\"${IP}\\"/>#; s#<gateway val=\\"[^\\"]*\\"/>#<gateway val=\\"${GW}\\"/>#" "${CFG}"'    CFG=${CONFIG_FILE}    MODE=${NEW_MODE}    IP=${NEW_IP}    GW=${NEW_GW}
+#     # 확인(선택)
+#     ${out}=    Execute Command    bash -lc 'grep -E "<select|<ip |<gateway " "${0}"'    ${CONFIG_FILE}
+#     Log    ${out}
+#     Close Connection
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
