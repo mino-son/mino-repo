@@ -67,6 +67,14 @@ Cell Reboot And Reconnect
     Close all connections
 	Open Connection And Log In LTE    
 
+
+ToD Status
+    [Arguments]    ${text}
+    # "- Status = Synchronized" 줄에서 값만 뽑아옴
+    ${m}=    Get Regexp Matches    ${text}    (?m)^-\s*Status\s*=\s*([^\r\n]+)
+    Should Not Be Empty    ${m}
+    [Return]    ${m[0]}
+
 *** Test Cases ***    ##################################################
 
 # Start Automation Test_initial Cell Settings
@@ -93,23 +101,13 @@ LTE ToD Sync ≤60s (Epoch)
     ${robot_epoch}=  Get Current Date    result_format=epoch
     ${delta}=        Evaluate    abs(${lte_epoch} - ${robot_epoch})
     Should Be True   ${delta} <= 60
+    
     Write    idm oam -x ls Device.Time
     ${output_device_time}=    Read Until Prompt  strip_prompt=True
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
-
-    [Arguments]    ${output_device_time}
-    # (옵션) ANSI 잔여 토큰 제거: ESC 시퀀스/ [1m … [m 같은 것들
-    ${clean}=    Replace String Using Regexp    ${output_device_time}    \x1B\[[0-9;]*[A-Za-z]    ${EMPTY}
-    ${clean}=    Replace String Using Regexp    ${clean}    \[[0-9;]*m    ${EMPTY}
-
-    ${matches}=    Get Regexp Matches    ${clean}    (?m)(?<=-\s*Status\s*=\s*)[^\r\n]+
-    Should Not Be Empty    ${matches}
-    ${status}=     Set Variable    ${matches[0]}
-    [Return]       ${status}
-
     
-    Set Test Message   Check the ToD status     (${status})
+    Set Test Message   ToD=${status},     Δ=${delta}s
 
 
 Check Cell Status In CLI
