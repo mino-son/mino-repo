@@ -121,6 +121,7 @@ LTE Check IPSEC Tunnel complete
     ## clean_output을 이용해 개행문자 제외
     ${clean_output}=    Replace String Using Regexp    ${lte_ipsec_statusall}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    172.21.0.3
+    Should Contain    ${clean_output}    Security Associations (
 
     Set Test Message   ToD=${clean_output}
     Close all connections
