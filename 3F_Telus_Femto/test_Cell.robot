@@ -81,18 +81,16 @@ Cell Reboot And Reconnect
 #     Close all connections  
 
 
-LTE ToD Sync ≤60s (KST, Simple)
+LTE ToD Sync ≤60s (Epoch)
     Open Connection And Log In LTE
-    Write    TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S'
+    Write    date +%s
     ${buf}=    Read Until Prompt    strip_prompt=True
-    ${m}=      Get Regexp Matches    ${buf}    (\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})
+    ${m}=      Get Regexp Matches    ${buf}    \\d{10,}
     Should Not Be Empty    ${m}
-    ${lte}=    Set Variable    ${m[0]}
-    ${robot}=  Get Current Date    tz=Asia/Seoul    result_format=%Y-%m-%d %H:%M:%S
-    ${lte_epoch}=      Convert Date    ${lte}     result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
-    ${robot_epoch}=    Convert Date    ${robot}   result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
-    ${delta}=          Evaluate    abs(${lte_epoch} - ${robot_epoch})
-    Should Be True     ${delta} <= 60
+    ${lte_epoch}=    Convert To Integer    ${m[0]}
+    ${robot_epoch}=  Get Current Date    result_format=epoch
+    ${delta}=        Evaluate    abs(${lte_epoch} - ${robot_epoch})
+    Should Be True   ${delta} <= 60
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
