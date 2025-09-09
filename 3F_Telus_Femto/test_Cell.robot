@@ -81,32 +81,23 @@ Cell Reboot And Reconnect
 #     Close all connections  
 
 
-LTE Check ToD Sync complete
+LTE Check ToD Sync Within 60s (KST)
     Open Connection And Log In LTE
-    Write    date -u -Idate
-    ${lte_current_time}=    Read Until Prompt
-    ${lte_current_time}=    String.Get Line    ${lte_current_time}    0
-    ${lte_current_time}=    Get Substring	${lte_current_time}    0    10
-    Log    ${lte_current_time}
-    ${robot_date}=	Get Current Date	UTC
-    ${robot_date}=    Get Substring	${robot_date}    0    10
-    Log    ${robot_date}
-    Should Be Equal    ${lte_current_time}    ${robot_date}
-
-LTE Check ToD Sync Within 60s
-    Open Connection And Log In LTE
-    Write    date -u '+%Y-%m-%d %H:%M:%S'
+    # 원격 장비의 KST 시각(초 단위)
+    Write    TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S'
     ${buf}=    Read Until Prompt    strip_prompt=True
 
     ${matches}=    Get Regexp Matches    ${buf}    (?m)^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
     ${lte_full}=    Set Variable    ${matches[0]}
     Log    lte_full=${lte_full}
 
-    ${robot_full}=    Get Current Date    KST-9    result_format=%Y-%m-%d %H:%M:%S
+    # Robot 실행 PC의 KST 시각(초 단위)
+    ${robot_full}=    Get Current Date    tz=Asia/Seoul    result_format=%Y-%m-%d %H:%M:%S
     Log    robot_full=${robot_full}
 
-    ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=UTC
-    ${robot_epoch}=    Convert Date    ${robot_full}    result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=UTC
+    # 둘 다 'KST'로 해석해서 epoch 변환
+    ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
+    ${robot_epoch}=    Convert Date    ${robot_full}    result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
     ${delta}=          Evaluate    abs(${lte_epoch} - ${robot_epoch})
     Log    delta_seconds=${delta}
 
