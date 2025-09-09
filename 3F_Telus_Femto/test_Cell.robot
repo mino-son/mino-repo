@@ -91,6 +91,11 @@ LTE ToD Sync ≤60s (Epoch)
     ${robot_epoch}=  Get Current Date    result_format=epoch
     ${delta}=        Evaluate    abs(${lte_epoch} - ${robot_epoch})
     Should Be True   ${delta} <= 60
+    Write    idm oam -x ls Device.Time
+    ${output_device_time}=    Read Until Prompt  strip_prompt=True
+    log     ${output_device_time}
+    Should Contain    ${output_device_time}    Status = Synchronized
+
 
 Check Cell Status In CLI
     Open Connection And Log In LTE 
