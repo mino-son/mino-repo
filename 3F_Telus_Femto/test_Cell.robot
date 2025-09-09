@@ -153,13 +153,14 @@ LTE Check QEMS Connected
     [Documentation]    QEMS 연결 status 확인
     [Tags]    PnP    
     Open Connection Jenkins Server
+
     Write    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["111CA24X000019"]}'
-    ${qmes_status}=    Read Until Prompt    strip_prompt=True
+    ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    "Status":"ServiceOn"
-    Set Test Message   QEMS status=${clean2_output}
+    Set Test Message   QEMS status=${clean_output}
     Close all connections
-    
+
 Check Cell Status In CLI
     Open Connection And Log In LTE 
     
