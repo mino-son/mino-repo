@@ -70,9 +70,6 @@ Open Connection SecGW Core
 Open Connection Jenkins Server
     SSHLibrary.Open Connection    ${jenkinsserver_ssh_connection_ip}
     SSHLibrary.Login    epc2    qucell
-    Write    su -
-    Read Until Regexp    (?i)password:
-    Write    qucell
     Set Client Configuration    prompt=#
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
@@ -149,7 +146,7 @@ LTE Check IPSEC Tunnel complete
     Close all connections
 
 
-LTE Check QEMS Connected
+LTE Check QEMS Connected            #### 여기부터 다시 확인하자
     [Documentation]    QEMS 연결 status 확인
     [Tags]    PnP    
     Open Connection Jenkins Server
@@ -159,6 +156,7 @@ LTE Check QEMS Connected
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    "Status":"ServiceOn"
     Set Test Message   QEMS status=${clean_output}
+
     Close all connections
 
 Check Cell Status In CLI
