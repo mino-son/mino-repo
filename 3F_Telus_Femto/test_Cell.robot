@@ -93,6 +93,25 @@ LTE Check ToD Sync complete
     Log    ${robot_date}
     Should Be Equal    ${lte_current_time}    ${robot_date}
 
+LTE Check ToD Sync Within 60s
+    Open Connection And Log In LTE
+    Write    date -u '+%Y-%m-%d %H:%M:%S'
+    ${buf}=    Read Until Prompt    strip_prompt=True
+
+    ${matches}=    Get Regexp Matches    ${buf}    (?m)^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
+    ${lte_full}=    Set Variable    ${matches[0]}
+    Log    lte_full=${lte_full}
+
+    ${robot_full}=    Get Current Date    UTC    result_format=%Y-%m-%d %H:%M:%S
+    Log    robot_full=${robot_full}
+
+    ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=UTC
+    ${robot_epoch}=    Convert Date    ${robot_full}    result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=UTC
+    ${delta}=          Evaluate    abs(${lte_epoch} - ${robot_epoch})
+    Log    delta_seconds=${delta}
+
+    Should Be True    ${delta} <= 60
+
 Check Cell Status In CLI
     Open Connection And Log In LTE 
     
