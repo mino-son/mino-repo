@@ -102,7 +102,7 @@ LTE Check ToD Sync Within 60s
     ${lte_full}=    Set Variable    ${matches[0]}
     Log    lte_full=${lte_full}
 
-    ${robot_full}=    Get Current Date    UTC    result_format=%Y-%m-%d %H:%M:%S
+    ${robot_full}=    Get Current Date    KST-9    result_format=%Y-%m-%d %H:%M:%S
     Log    robot_full=${robot_full}
 
     ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=UTC
