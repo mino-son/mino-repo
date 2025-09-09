@@ -122,8 +122,14 @@ LTE Check IPSEC Tunnel complete
     ${clean_output}=    Replace String Using Regexp    ${lte_ipsec_statusall}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    172.21.0.3
     Should Contain    ${clean_output}    Security Associations (
-
     Set Test Message   ToD=${clean_output}
+
+    Write    idm oam -x status 
+    ${lte_status}=    Read Until Prompt    strip_prompt=True  
+    ${clean_output}=    Replace String Using Regexp    ${lte_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+    Should Contain    ${clean_output}    Virtual IP: up
+    Set Test Message   ipsec status=${clean_output}
+    
     Close all connections
 
 Check Cell Status In CLI
