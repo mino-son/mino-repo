@@ -126,7 +126,7 @@ LTE Check IPSEC Tunnel complete
     ${lte_status}=    Read Until Prompt    strip_prompt=True  
     ${clean2_output}=    Replace String Using Regexp    ${lte_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean2_output}    Virtual IP: up
-    Set Test Message   ipsec status=${clean2_output},  ToD=${clean_output}
+    Set Test Message   ipsec status=${clean2_output}
     
     Close all connections
 
