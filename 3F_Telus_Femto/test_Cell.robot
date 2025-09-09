@@ -83,19 +83,26 @@ Cell Reboot And Reconnect
 
 LTE Check ToD Sync Within 60s (KST)
     Open Connection And Log In LTE
-    # 원격 장비의 KST 시각(초 단위)
+
+    # 1) 시간 출력 (따옴표 OK, 네 장비 기준)
     Write    TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S'
     ${buf}=    Read Until Prompt    strip_prompt=True
+    Log    RAW_FROM_DEVICE:\n${buf}
 
-    ${matches}=    Get Regexp Matches    ${buf}    (?m)^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$
-    ${lte_full}=    Set Variable    ${matches[0]}
+    # 2) (옵션) ANSI 색상/제어코드 제거
+    ${buf}=    Replace String Using Regexp    ${buf}    \x1B\[[0-9;]*[A-Za-z]    ${EMPTY}
+
+    # 3) '#'(프롬프트/에코)로 시작하는 줄은 제외하고, 시간 줄만 추출
+    #    - 캡처 괄호 없음 → ${matches[0]} 가 순수 문자열
+    ${matches}=    Get Regexp Matches    ${buf}    (?m)^(?!#)\s*\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s*$
+    Should Not Be Empty    ${matches}
+    ${lte_full}=    Strip String    ${matches[0]}
     Log    lte_full=${lte_full}
 
-    # Robot 실행 PC의 KST 시각(초 단위)
+    # 4) 로컬(KST) 시각과 비교
     ${robot_full}=    Get Current Date    tz=Asia/Seoul    result_format=%Y-%m-%d %H:%M:%S
     Log    robot_full=${robot_full}
 
-    # 둘 다 'KST'로 해석해서 epoch 변환
     ${lte_epoch}=      Convert Date    ${lte_full}      result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
     ${robot_epoch}=    Convert Date    ${robot_full}    result_format=epoch    date_format=%Y-%m-%d %H:%M:%S    tz=Asia/Seoul
     ${delta}=          Evaluate    abs(${lte_epoch} - ${robot_epoch})
