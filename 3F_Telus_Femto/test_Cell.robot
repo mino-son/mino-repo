@@ -106,10 +106,23 @@ LTE ToD Sync ≤60s (Epoch)
     ${output_device_time}=    Read Until Prompt  strip_prompt=True
     log     ${output_device_time}
     Should Contain    ${output_device_time}    Status = Synchronized
+    ## clean_output을 이용해 개행문자 제외
     ${clean_output}=    Replace String Using Regexp    ${output_device_time}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
 
     Set Test Message   ToD=${clean_output}
+    Close all connections
 
+LTE Check IPSEC Tunnel complete
+    [Documentation]    IPSec Connected 확인
+    [Tags]    PnP    
+    Open Connection And Log In LTE
+    Write    ipsec statusall
+    ${lte_ipsec_statusall}=    Read Until Prompt
+    ${clean_output}=    Replace String Using Regexp    ${lte_ipsec_statusall}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+
+    Should Contain    ${lte_ipsec_status}    172.21.0.3
+    Close all connections
+    
 Check Cell Status In CLI
     Open Connection And Log In LTE 
     
