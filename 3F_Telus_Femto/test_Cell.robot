@@ -16,6 +16,7 @@ ${cell_ssh_connection_ip}           172.30.100.120
 ${DruidCore_ssh_connection_ip}      10.253.3.107
 ${segw_ssh_connection_ip}           10.253.3.66
 ${jenkinsserver_ssh_connection_ip}  10.253.3.186
+${qemsapi_connection_ip}            10.253.3.83:11000
 ${remote_working_path}              /tmp
 ${user_id}                          tultefc
 ${user_pass}                        *eksvkxQkd#!
@@ -151,7 +152,7 @@ LTE Check QEMS Connected            #### 여기부터 다시 확인하자
     [Tags]    PnP    
     Open Connection Jenkins Server
 
-    Write    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["111CA24X000019"]}'
+    Write    curl -v -X 'POST' http://${qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["111CA24X000019"]}'
     ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    "Status":"ServiceOn"
