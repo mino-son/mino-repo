@@ -62,7 +62,7 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration    prompt=#    
+    Set Client Configuration    prompt=root@localhost:/home#    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True    
 
