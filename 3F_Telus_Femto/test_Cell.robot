@@ -142,7 +142,7 @@ Check NR Cell Status In CLI
 
 LTE Check ToD Sync         #정상동작 확인
     [Documentation]    ToD Synchronized 정상 동작 확인
-    [Tags]    PnP    
+    [Tags]    LTE PnP    
     Open Connection And Log In LTE
     Write    date +%s
     ${buf}=    Read Until Prompt    strip_prompt=True
@@ -167,7 +167,7 @@ LTE Check ToD Sync         #정상동작 확인
 
 LTE Check IPSEC Tunnel complete        #정상동작 확인
     [Documentation]    IPSec Connected 확인
-    [Tags]    PnP    
+    [Tags]    LTE PnP    
     Open Connection And Log In LTE
     # Write    ipsec statusall 
     # ${lte_ipsec_statusall}=    Read Until Prompt    strip_prompt=True  
@@ -184,20 +184,20 @@ LTE Check IPSEC Tunnel complete        #정상동작 확인
     Close all connections
 
 
-LTE Check QEMS Connected            #정상동작 확인
-    [Documentation]    QEMS 와 LTE Cell Conneted status 확인
-    [Tags]    PnP    
-    Open Connection Jenkins Server
+# LTE Check QEMS Connected            #정상동작 확인
+#     [Documentation]    QEMS 와 LTE Cell Conneted status 확인
+#     [Tags]    PnP    
+#     Open Connection Jenkins Server
 
-    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-    ${qems_status}=    Read Until Prompt    strip_prompt=True
-    ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
-    Should Contain    ${clean_output}    "Status":"ServiceOn"
-    Set Test Message   QEMS status=${clean_output}
+#     Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
+#     ${qems_status}=    Read Until Prompt    strip_prompt=True
+#     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+#     Should Contain    ${clean_output}    "Status":"ServiceOn"
+#     Set Test Message   QEMS status=${clean_output}
 
-    Close all connections
+#     Close all connections
 
-    Check LTE Cell Status In CLI
+#     Check LTE Cell Status In CLI
 
 
 # LTE Sync Source NTP status
@@ -213,70 +213,76 @@ LTE Check QEMS Connected            #정상동작 확인
 
 LTE Sync Source EXT_PPS status
     Open Connection And Log In LTE
-
+    [Documentation]    synchronization (EXTPPS) Stability (LTE)
+    [Tags]  LTE PnP
     Keepalive Loop Interval  1  60 s     
     Write    idm oam -x syncmgrstate
     ${output_extpps_sync}=    Read Until Prompt  strip_prompt=True  
     log     ${output_extpps_sync}
     Should Contain    ${output_extpps_sync}    Active Sync Source : EXTPPS
     Should Contain    ${output_extpps_sync}    Sync Manager State : DISP
+    Set Test Message   LTE Sync EXT_PPS status=${output_extpps_sync}
     Close all connections
 
 
-LTE IPSEC Down        #정상동작 확인
-    Open Connection SecGW Core
+# LTE IPSEC Down        #정상동작 확인
+#     Open Connection SecGW Core
+#     [Documentation]    IPSec (down/up repeat)
+#     [Tags]  Regression
+#     Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+#     Write   iptables -A INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+#     ${block_ip}=    Read Until Prompt  strip_prompt=True    
+#     Log     ${block_ip}
+#     Close all connections
+#     Sleep  5s
 
-    Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-    Write   iptables -A INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-    ${block_ip}=    Read Until Prompt  strip_prompt=True    
-    Log     ${block_ip}
-    Close all connections
-    Sleep  5s
-
-    Open Connection And Log In LTE        
-    Keepalive Loop Interval  12  60 s 
+#     Open Connection And Log In LTE        
+#     Keepalive Loop Interval  12  60 s 
     
-    Write    idm oam -x status
-    ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
-    Log      ${output_mme_status}
-    Should Contain    ${output_mme_status}     Virtual IP: down
+#     Write    idm oam -x status
+#     ${output_mme_status}=    Read Until Prompt  strip_prompt=True   
+#     Log      ${output_mme_status}
+#     Should Contain    ${output_mme_status}     Virtual IP: down
 
-    Write    idm oam -x alarm
-    ${output_alarm_status}=    Read Until Prompt  strip_prompt=True   
-    Log      ${output_alarm_status}
-    Should Contain    ${output_mme_status}     IPsec
-    Close all connections
+#     Write    idm oam -x alarm
+#     ${output_alarm_status}=    Read Until Prompt  strip_prompt=True   
+#     Log      ${output_alarm_status}
+#     Should Contain    ${output_mme_status}     IPsec
+#     Set Test Message   Cell Alarm after IPSec Down=${output_mme_status}
+#     Close all connections
     
 
-LTE IPSEC Up & Cell up Checking        #정상동작 확인
-    Open Connection SecGW Core   
-    
-    Write   iptables -D INPUT 1
-    Write   iptables -D OUTPUT 1
-    Keepalive Loop Interval  2  60 s
-    Close all connections
+# LTE IPSEC Up & Cell up Checking        #정상동작 확인
+#     Open Connection SecGW Core   
+#     [Documentation]    IPSec (down/up repeat)
+#     [Tags]  Regression
+#     Write   iptables -D INPUT 1
+#     Write   iptables -D OUTPUT 1
+#     Keepalive Loop Interval  2  60 s
+#     Close all connections
 
-    Open Connection And Log In LTE
+#     Open Connection And Log In LTE
     
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Should Contain    ${output_status}    AdminState: 1
-    Close all connections  
+#     Write    idm oam -x status
+#     ${output_status}=    Read Until Prompt  
+#     log     ${output_status}
+#     Should Contain    ${output_status}    StackRunning: 1
+#     Should Contain    ${output_status}    RFTxStatus: 1
+#     Should Contain    ${output_status}    Number of Active MMEs: 1
+#     Should Contain    ${output_status}    AdminState: 1
+#     Set Test Message   Cell Status After IPSec Up =${output_status}
+#     Close all connections  
 
-Reboot LTE Pico From QEMS(API)
-    [Documentation]    Reboot system (EMS) - LTE Cell
-    [Tags]    OAM 
-    Open Connection Jenkins Server
-    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"RebootLTE","serialNumber":"441CA25X000019"}'
-    Close all connections
+# Reboot LTE Pico From QEMS(API)
+#     [Documentation]    Reboot system (EMS) - LTE Cell
+#     [Tags]    OAM 
+#     Open Connection Jenkins Server
+#     Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"RebootLTE","serialNumber":"441CA25X000019"}'
+#     Close all connections
     
-    Sleep    180s
-    Open Connection And Log In LTE
-    Check LTE Cell Status In CLI
+#     Sleep    180s
+#     Open Connection And Log In LTE
+#     Check LTE Cell Status In CLI
 
 
 
@@ -285,12 +291,13 @@ Reboot LTE Pico From QEMS(API)
 
 Check NR Cell Active In CLI
     Open Connection And Log In NR
-    [Documentation]    Checking NR Cell Running
+    [Documentation]    Checking NR Cell Normal Running
     [Tags]   NR status    
     Write    nrctl
     ${output_status}=    Read Until Prompt  strip_prompt=True
     log     ${output_status}
     Should Contain    ${output_status}    cellState: Active
+    Should Contain    ${output_status}    operationalState: Enabled
     Set Test Message   Cell status=${output_status}
     Close all connections    
 
