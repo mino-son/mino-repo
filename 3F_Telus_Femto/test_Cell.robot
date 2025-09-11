@@ -23,7 +23,9 @@ ${lte_user_pass}                        *Rhkqorl#!
 ${lte_root_pass}                        *EhEldi#!
 ${before_oam}                           /tmp/before.xml
 ${after_oam}                            /tmp/after.xml
-
+${REMOTE_PATH}                          /tmp/config.xml
+${LOCAL_DIR}      ${OUTPUT DIR}/artifacts
+${LOCAL_PATH}     ${LOCAL_DIR}/config.xml
 
 *** Keywords ***    ##################################################
 Keepalive Loop Interval
@@ -104,7 +106,7 @@ Check Cell Status In CLI
 
 *** Test Cases ***    ##################################################
 
-# Start Automation Test_initial Cell Settings
+# Start Automation Test_initial Cell Settings        #정상동작 확인
 #     Cell Reboot And Reconnect
     
 #     Write    idm oam -x status
@@ -116,8 +118,8 @@ Check Cell Status In CLI
 #     Close all connections  
 
 
-LTE ToD Sync ≤60s (Epoch)
-    [Documentation]    ToD Synchronized 동작 확인
+LTE Check ToD Sync         #정상동작 확인
+    [Documentation]    ToD Synchronized 정상 동작 확인
     [Tags]    PnP    
     Open Connection And Log In LTE
     Write    date +%s
@@ -139,7 +141,7 @@ LTE ToD Sync ≤60s (Epoch)
     Set Test Message   ToD=${clean_output}
     Close all connections
 
-LTE Check IPSEC Tunnel complete
+LTE Check IPSEC Tunnel complete        #정상동작 확인
     [Documentation]    IPSec Connected 확인
     [Tags]    PnP    
     Open Connection And Log In LTE
@@ -158,8 +160,8 @@ LTE Check IPSEC Tunnel complete
     Close all connections
 
 
-LTE Check QEMS Connected            #### 여기부터 다시 확인하자
-    [Documentation]    QEMS 연결 status 확인
+LTE Check QEMS Connected            #정상동작 확인
+    [Documentation]    QEMS 와 LTE Cell Conneted status 확인
     [Tags]    PnP    
     Open Connection Jenkins Server
 
@@ -185,7 +187,7 @@ LTE Check QEMS Connected            #### 여기부터 다시 확인하자
 #     Close all connections
 
 
-# IPSEC Down
+# IPSEC Down        #정상동작 확인
 #     Open Connection SecGW Core
 
 #     Write   iptables -A OUTPUT -s ${cell_ssh_connection_ip} -j DROP
@@ -210,7 +212,7 @@ LTE Check QEMS Connected            #### 여기부터 다시 확인하자
 #     Close all connections
     
 
-# IPSEC Up & Cell up Checking 
+# IPSEC Up & Cell up Checking        #정상동작 확인
 #     Open Connection SecGW Core   
     
 #     Write   iptables -D INPUT 1
