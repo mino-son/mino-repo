@@ -11,18 +11,18 @@ Library                Collections
 
 
 *** Variables ***    ##################################################
-${PROMPT_ANY}                       REGEXP:[#$] ?$
-${cell_ssh_connection_ip}           172.30.100.120
-${DruidCore_ssh_connection_ip}      10.253.3.107
-${segw_ssh_connection_ip}           10.253.3.66
-${jenkinsserver_ssh_connection_ip}  10.253.3.186
-${qemsapi_connection_ip}            10.253.3.83:11000
-${remote_working_path}              /tmp
-${user_id}                          tultefc
-${user_pass}                        *eksvkxQkd#!
-${root_pass}                        *Tkfrnrtn#!
-${before_oam}     /tmp/before.xml
-${after_oam}     /tmp/after.xml
+${PROMPT_ANY}                           REGEXP:[#$] ?$
+${lte_cell_ssh_connection_ip}           172.30.100.114
+${DruidCore_ssh_connection_ip}          10.253.3.107
+${segw_ssh_connection_ip}               10.253.3.66
+${jenkinsserver_ssh_connection_ip}      10.253.3.186
+${lte_qemsapi_connection_ip}            10.253.3.83:11000
+${remote_working_path}                  /tmp
+${lte_user_id}                          tultepc
+${lte_user_pass}                        *Rhkqorl#!
+${lte_root_pass}                        *EhEldi#!
+${before_oam}                           /tmp/before.xml
+${after_oam}                            /tmp/after.xml
 
 
 *** Keywords ***    ##################################################
@@ -42,11 +42,11 @@ Check ls Utility
     ${ls_output}=    Execute Command    ls
 
 Open Connection And Log In LTE
-    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}    
-    SSHLibrary.Login              ${user_id}    ${user_pass}
+    SSHLibrary.Open Connection    ${lte_cell_ssh_connection_ip}    
+    SSHLibrary.Login              ${lte_user_id}    ${lte_user_pass}
     Write    su -
     Read Until Regexp    (?i)password:
-    Write    ${root_pass}
+    Write    ${lte_root_pass}
     Set Client Configuration    prompt=#    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
@@ -90,6 +90,17 @@ ToD Status
     ${m}=    Get Regexp Matches    ${text}    (?m)^-\s*Status\s*=\s*([^\r\n]+)
     Should Not Be Empty    ${m}
     [Return]    ${m[0]}
+
+Check Cell Status In CLI
+    Open Connection And Log In LTE 
+    
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt  strip_prompt=True
+    log     ${output_status}
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Close all connections
 
 *** Test Cases ***    ##################################################
 
@@ -152,25 +163,15 @@ LTE Check QEMS Connected            #### 여기부터 다시 확인하자
     [Tags]    PnP    
     Open Connection Jenkins Server
 
-    Write    curl -v -X 'POST' http://${qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["111CA24X000019"]}'
+    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["111CA24X000019"]}'
     ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    "Status":"ServiceOn"
     Set Test Message   QEMS status=${clean_output}
 
     Close all connections
+    Check Cell Status In CLI
 
-Check Cell Status In CLI
-    Open Connection And Log In LTE 
-    
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  strip_prompt=True
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Close all connections
-    
 
 # Sync Source NTP status
 #     Open Connection And Log In LTE
@@ -226,3 +227,16 @@ Check Cell Status In CLI
 #     Should Contain    ${output_status}    RFTxStatus: 1
 #     Should Contain    ${output_status}    Number of Active MMEs: 1
 #     Close all connections  
+
+Reboot Femto From QEMS(API)
+    [Documentation]    Reboot system (EMS) - LTE Cell
+    [Tags]    OAM 
+    Open Connection Jenkins Server
+    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"RebootLTE","serialNumber":"111CA24X000019"}'
+    Close all connections
+    
+    Sleep    180s
+    Open Connection And Log In LTE
+    Check Cell Status In CLI
+
+

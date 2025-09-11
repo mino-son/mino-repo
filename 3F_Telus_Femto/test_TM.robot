@@ -7,15 +7,15 @@ Library                Browser
 Library                Process
 
 *** Variables ***
-${cell_ssh_connection_ip}               172.30.100.120
-${DruidCore_ssh_connection_ip}          10.253.3.107
-${segw_ssh_connection_ip}               10.253.3.66
-${pkg_lte_name}                         ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
-${remote_working_path}                  /tmp
-${user_id}                              tultefc
-${user_pass}                            *eksvkxQkd#!
-${root_pass}                            *Tkfrnrtn#!
-${TM_connection_ip}                     10.253.3.199
+${lte_cell_ssh_connection_ip}               172.30.100.114
+${DruidCore_ssh_connection_ip}              10.253.3.107
+${segw_ssh_connection_ip}                   10.253.3.66
+${pkg_lte_name}                             ifq-LGU-LTEAO-4.4.1-rc0.tar.gz
+${remote_working_path}                      /tmp
+${lte_user_id}                              tultepc
+${lte_user_pass}                            *Rhkqorl#!
+${lte_root_pass}                            *EhEldi#!
+${TM_connection_ip}                         10.253.3.199
 
 *** Keywords ***
 Check ps Utility
@@ -26,11 +26,11 @@ Check ls Utility
     ${ls_output}=    Execute Command    ls
 
 Open Connection And Log In LTE
-    SSHLibrary.Open Connection    ${cell_ssh_connection_ip}
-    SSHLibrary.Login    ${user_id}    ${user_pass}
+    SSHLibrary.Open Connection    ${lte_cell_ssh_connection_ip}
+    SSHLibrary.Login    ${lte_user_id}    ${lte_user_pass}
     Write    su -
     Read Until Regexp    (?i)password:
-    Write    ${root_pass}
+    Write    ${lte_root_pass}
     Set Client Configuration    prompt=#
 
 Open Connection SSH Druid Core
