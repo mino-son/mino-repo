@@ -215,7 +215,8 @@ LTE Check QEMS Connected            #정상동작 확인
     Set Client Configuration    timeout=60 seconds
     Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
 
-    ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json' -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ==' -H 'Content-Type: application/json; charset=utf-8' -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
+                                                 
     Log To Console    \n===CMD===\n${cmd}\n===END===
 
     Write    ${cmd}
