@@ -324,37 +324,17 @@ LTE Sync Source EXT_PPS status
 
 #########################################################################################
 
-
-
-
 Check NR Cell Active In CLI
-    [Documentation]    Checking NR Cell Active
-    ...                NR Cell ssh 접속 후, nrctl 입력하여 [cellState: Active], [operationalState: Enabled] 확인
-    [Tags]   NR status    
     Open Connection And Log In NR
+    [Documentation]    Checking NR Cell Normal Running
+    [Tags]   NR status
 
-    ${output_status}=    Run    nrctl
-    
-    Log To Console    ${output_status}
-    Log    ${output_status}
-
+    Write    nrctl
+    ${output_status}=    Read Until Prompt  strip_prompt=True    
     Should Contain    ${output_status}    cellState: Active
     Should Contain    ${output_status}    operationalState: Enabled
-    Set Test Message    =${output_status}
-
-    Close All Connections
-
-# Check NR Cell Active In CLI
-#     Open Connection And Log In NR
-#     [Documentation]    Checking NR Cell Normal Running
-#     [Tags]   NR status
-
-#     Write    nrctl
-#     ${output_status}=    Read Until Prompt  strip_prompt=True    
-#     Should Contain    ${output_status}    cellState: Active
-#     Should Contain    ${output_status}    operationalState: Enabled
-#     Set Test Message   Cell status=${output_status}
-#     Close all connections
+    Set Test Message   Cell status=${output_status}
+    Close all connections
 
 
 
