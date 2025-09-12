@@ -221,16 +221,12 @@ LTE Check QEMS Connected            #정상동작 확인
     # 커맨드 실행
     Write    ${cmd}
 
-    # curl 끝 신호까지 읽기 (둘 다 대응: keep-alive 유지 or 바로 닫힘)
-    ${raw}=    Read Until Regexp    (?m)^\* (Connection #\d+ to host .+ left intact|Closing connection \d+)\r?$
+    # curl 끝 신호까지 읽기 (keep-alive or close 모두 대응)
+    ${raw}=    Read Until Regexp    (?m)^\\* (Connection #\\d+ to host .+ left intact|Closing connection \\d+)\\r?$
 
-    # 프롬프트까지 한 번 더 플러시
-    Read Until Prompt    strip_prompt=True
-
-    # 본문만 남기고 검증
-    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\r?\n?    ${EMPTY}
-    Should Match Regexp    ${body}    "Status"\s*:\s*"ServiceOn"
-
+    # 본문만 남기고 검증 (curl -v 디버그 라인 제거)
+    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
+    Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
 
 
     # ${qems_status}=    Read Until Prompt    strip_prompt=True
