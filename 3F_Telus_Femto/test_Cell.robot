@@ -63,7 +63,8 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration    prompt_regexp=(?ms)[#] ?$    
+    
+    Set Client Configuration    prompt=REGEXP:[#] ?$    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Set Client Configuration    timeout=2 seconds
     Read Until Prompt             strip_prompt=True    
