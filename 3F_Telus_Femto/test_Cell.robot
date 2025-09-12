@@ -62,7 +62,7 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration    prompt=root@localhost:/home#    
+    Set Client Configuration    prompt_regexp=(?ms)[#] ?$    timeout=15 seconds    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True    
 
@@ -252,26 +252,26 @@ LTE Sync Source EXT_PPS status
 #     Close all connections
     
 
-# LTE IPSEC Up & Cell up Checking        #정상동작 확인
-#     Open Connection SecGW Core   
-#     [Documentation]    IPSec (down/up repeat)
-#     [Tags]  Regression
-#     Write   iptables -D INPUT 1
-#     Write   iptables -D OUTPUT 1
-#     Keepalive Loop Interval  2  60 s
-#     Close all connections
+LTE IPSEC Up & Cell up Checking        #정상동작 확인
+    Open Connection SecGW Core   
+    [Documentation]    IPSec (down/up repeat)
+    [Tags]  Regression
+    Write   iptables -D INPUT 1
+    Write   iptables -D OUTPUT 1
+    Keepalive Loop Interval  2  60 s
+    Close all connections
 
-#     Open Connection And Log In LTE
+    Open Connection And Log In LTE
     
-#     Write    idm oam -x status
-#     ${output_status}=    Read Until Prompt  
-#     log     ${output_status}
-#     Should Contain    ${output_status}    StackRunning: 1
-#     Should Contain    ${output_status}    RFTxStatus: 1
-#     Should Contain    ${output_status}    Number of Active MMEs: 1
-#     Should Contain    ${output_status}    AdminState: 1
-#     Set Test Message   Cell Status After IPSec Up =${output_status}
-#     Close all connections  
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt  
+    log     ${output_status}
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Should Contain    ${output_status}    AdminState: 1
+    Set Test Message   Cell Status After IPSec Up =${output_status}
+    Close all connections  
 
 # Reboot LTE Pico From QEMS(API)
 #     [Documentation]    Reboot system (EMS) - LTE Cell
@@ -309,7 +309,7 @@ NR Cell ToD Sync complete
     ${nr_tod_status}=    Read Until Prompt    strip_prompt=True
     
     Should Contain    ${nr_tod_status}    NTP Status: SYNCHRONIZED
-    Set Test Message   ToD status=${nr_tod_status}
+    Set Test Message   ToD status=${nr_tod_status} 
     Close all connections
 
 NR Check IPSEC Tunnel complete        
