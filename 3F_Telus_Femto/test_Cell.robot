@@ -215,9 +215,9 @@ LTE Check QEMS Connected            #정상동작 확인
     
     | Write | curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}' |
 
-    Write    ${curl_cmd}
-    ${curl_cmd}=    Read Until Prompt    strip_prompt=True
-    ${clean_output}=    Replace String Using Regexp    ${curl_cmd}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+    #Write    ${curl_cmd}
+    | ${curl_cmd}=    Read Until Prompt    strip_prompt=True |
+    | ${clean_output}=    Replace String Using Regexp    ${curl_cmd}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} |
     Should Contain    ${clean_output}    "Status":"ServiceOn"
     Set Test Message   QEMS status=${clean_output}
 
