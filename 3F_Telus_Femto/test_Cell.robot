@@ -357,17 +357,22 @@ LTE Sync Source EXT_PPS status
 Debug 222
     Open Connection And Log In NR
 
-    # nrctl 진입 → '>' 프롬프트 포착 후, 기대 프롬프트를 '>'로 전환
-    Write    nrctl
-    ${gt_seen}=    Read Until Regexp    (?m)(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*$
-    Log To Console    ===NRCTL_PROMPT_SEEN===\n${gt_seen}\n===END===
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    # 1) 셸 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
+    Set Client Configuration    timeout=20 seconds
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Write    export TERM=dumb; unset PROMPT_COMMAND
+    ${flush}=    Read Until Prompt    strip_prompt=True
+    Log To Console    ===SHELL_SYNC===\n${flush}\n===END===
 
-    Write    show status
-    ${output_status}=    Read Until Prompt    strip_prompt=True
-    Log    ${output_status}
-    Should Contain    ${output_status}    cellState: Active
-    Should Contain    ${output_status}    operationalState: Enabled
+    # 2) nrctl 실행 → 셸 프롬프트(#)가 다시 나올 때까지 읽기
+    Write    nrctl
+    ${out}=    Read Until Prompt    strip_prompt=True
+    Log To Console    ===NRCTL_OUT===\n${out}\n===END===
+
+    # 3) 검증
+    Should Contain    ${out}    cellState: Active
+    Should Contain    ${out}    operationalState: Enabled
+
     Close All Connections
 
 # Check NR Cell Active In CLI
