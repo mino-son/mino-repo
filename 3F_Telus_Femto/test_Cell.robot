@@ -53,6 +53,7 @@ Open Connection And Log In LTE
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${lte_root_pass}
+
     Set Client Configuration    prompt=#
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
@@ -63,12 +64,9 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    
-    Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="NR# "
-    Read Until Regexp    (?m)^NR#\\s*$
-    Set Client Configuration    prompt=# 
-    Set Client Configuration    timeout=15 seconds
-    Read Until Prompt    strip_prompt=True
+
+    Set Client Configuration      prompt=# 
+    Read Until Prompt             strip_prompt=True
 
 
     #Set Client Configuration    prompt=REGEXP:root@localhost:[^\\n]*#\\s*$
