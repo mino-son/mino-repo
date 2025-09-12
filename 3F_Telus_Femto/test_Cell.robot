@@ -66,7 +66,7 @@ Open Connection And Log In NR
     
     Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="NR# "
     Read Until Regexp    (?m)^NR#\\s*$
-    Set Client Configuration    prompt=NR# 
+    Set Client Configuration    prompt=# 
     Set Client Configuration    timeout=15 seconds
     Read Until Prompt    strip_prompt=True
 
@@ -146,7 +146,7 @@ Check NR Cell Status In CLI
 
 #LTE initial Cell Settings        #정상동작 확인
 #     Cell Reboot And Reconnect
-
+#     Keepalive Loop Interval  5  60 s
 #     Write    idm oam -x status
 #     ${output_status}=    Read Until Prompt  strip_prompt=True
 #     log     ${output_status}
@@ -217,33 +217,11 @@ LTE Check QEMS Connected            #정상동작 확인
 
     # 2) 대화형 Write 대신, 단발 실행으로 stdout/stderr/rc 모두 받기
     ${out}    ${err}    ${rc}=    Execute Command    ${cmd}    return_stdout=True    return_stderr=True    return_rc=True    timeout=60s
-    #Log To Console    \n===RC===\n${rc}\n===END===
-    #Log To Console    \n===STDOUT===\n${out}\n===END===
-    #Log To Console    \n===STDERR===\n${err}\n===END===
-
-    # 3) -v의 디버그는 주로 STDERR로 나오므로 합쳐서 본문 추출
-    #${merged}=    Catenate    SEPARATOR=\n    ${out}    ${err}
-    # 디버그/헤더(*,<,>) 줄 제거 → 본문만
-    #${body}=    Replace String Using Regexp    ${merged}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    #Log To Console    \n===BODY===\n${body}\n===END===
-
-    # 4) 검증
-    # Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
     Should Contain    ${out}    "Status":"ServiceOn"
     Should Contain    ${out}    441CA25X000019
     Set Test Message       QEMS status=${out}
 
-
     Close All Connections
-
-
-    # Write    '''curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}' '''
-
-    # ${qems_status}=    Read Until Prompt    strip_prompt=True
-    # ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
-    # Should Contain    ${clean_output}    "Status":"ServiceOn"
-    # Should Contain    ${clean_output}    441CA25X000019
-    # Set Test Message   QEMS status=${clean_output}
    
 
 # LTE Sync Source NTP status
