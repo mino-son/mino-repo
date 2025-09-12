@@ -78,7 +78,6 @@ Open Connection And Log In NR
     Write    export LANG=C.UTF-8; export LC_ALL=C.UTF-8; export TERM=dumb; unset PROMPT_COMMAND
     Write    ${EMPTY}
     ${prompt_seen}=    Read Until Prompt    strip_prompt=True
-    Log To Console    ===PROMPT_OK===\n${prompt_seen}\n===END===
 
 
 Open Connection SSH Druid Core
@@ -327,7 +326,9 @@ LTE Sync Source EXT_PPS status
 Check NR Cell Active In CLI
     Open Connection And Log In NR
     [Documentation]    Checking NR Cell Normal Running
+    ...                NR Cell ssh 접속 후, nrctl로 [cellState: Active], [operationalState: Enabled] 확인
     [Tags]   NR status
+    ...      NR Sanity
 
     Write    nrctl
     ${output_status}=    Read Until Prompt  strip_prompt=True    
@@ -335,8 +336,6 @@ Check NR Cell Active In CLI
     Should Contain    ${output_status}    operationalState: Enabled
     Set Test Message   Cell status=${output_status}
     Close all connections
-
-
 
 # NR Cell ToD Sync complete
 #     [Documentation]    Checking NR Cell Tod Sync
