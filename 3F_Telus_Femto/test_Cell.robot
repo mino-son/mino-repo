@@ -203,6 +203,7 @@ LTE Check IPSEC Tunnel complete        #정상동작 확인
 
 LTE Check QEMS Connected            #정상동작 확인
     [Documentation]    QEMS 와 LTE Cell Conneted status 확인
+    ...
     ...                QEMS API Get으로, QEMS Connected Device(serialNumber)의 "Status":"ServiceOn" 조회
     [Tags]    LTE PnP
     ...       LTE Sanity
