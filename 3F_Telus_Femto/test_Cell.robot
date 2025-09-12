@@ -95,6 +95,7 @@ Open Connection Jenkins Server
     #Read Until Prompt             strip_prompt=True
     Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
     Read Until Prompt    strip_prompt=True
+    
 
 
 Cell Reboot And Reconnect
@@ -199,9 +200,12 @@ LTE Check QEMS Connected            #정상동작 확인
     ...                QEMS API Get으로, QEMS Connected Device(serialNumber)의 "Status":"ServiceOn" 조회
     [Tags]    LTE PnP
     ...       LTE Sanity
+        
     Open Connection Jenkins Server
 
-    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
+    #Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
+    ${curl_cmd}=    Catenate    SEPARATOR=    curl -sS --fail-with-body -X POST "http://${lte_qemsapi_connection_ip}/api/v1/telus"    -H "accept: application/json"    -H "Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=="    -H "Content-Type: application/json; charset=utf-8"    -d "{\"actionType\":\"SN_GetStatusLTE\",\"serialNumber\":[\"${device_serial}\"]}"    2>&1
+    Write    ${curl_cmd}
     ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    "Status":"ServiceOn"
