@@ -159,7 +159,9 @@ Check NR Cell Status In CLI
 
 LTE Check ToD Sync         #정상동작 확인
     [Documentation]    ToD Synchronized 정상 동작 확인
-    [Tags]    LTE PnP    
+    ...                idm oam -x ls Device.Time 출력 결과 중, Status = Synchronized 를 확인
+    [Tags]    LTE PnP
+    ...       LTE Sanity    
     Open Connection And Log In LTE
     Write    date +%s
     ${buf}=    Read Until Prompt    strip_prompt=True
@@ -184,7 +186,9 @@ LTE Check ToD Sync         #정상동작 확인
 
 LTE Check IPSEC Tunnel complete        #정상동작 확인
     [Documentation]    IPSec Connected 확인
-    [Tags]    LTE PnP    
+    ...                idm oam -x status 의 결과 중, "Virtual IP: up" 체크
+    [Tags]    LTE PnP
+    ...       LTE Sanity    
     Open Connection And Log In LTE
     # Write    ipsec statusall 
     # ${lte_ipsec_statusall}=    Read Until Prompt    strip_prompt=True  
