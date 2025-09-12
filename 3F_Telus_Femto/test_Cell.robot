@@ -63,19 +63,25 @@ Open Connection And Log In NR
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
     
-        # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
+    # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
     Set Log Level    TRACE
-    Write                                 # 빈 줄 → 프롬프트 강제 출력
-    ${snap0}=    Read    delay=1s
+
+    Write    ${EMPTY}
+    Sleep    0.5s
+    ${snap0}=    Read
     Log To Console    ===PROMPT_SNAPSHOT===\n${snap0}\n===END===
 
     Write    printf 'PS1_RAW<<%s>>\n' "$PS1"
-    ${ps1}=    Read    delay=1s
+    Sleep    0.5s
+    ${ps1}=    Read
     Log To Console    ===PS1===\n${ps1}\n===END===
 
     Write    echo "TERM=$TERM"; echo "PROMPT_COMMAND=$PROMPT_COMMAND"
-    ${env}=    Read    delay=1s
+    Sleep    0.5s
+    ${env}=    Read
     Log To Console    ===ENV===\n${env}\n===END===
+
+    # (프롬프트 패턴은 이 출력 보고 확정하자)
 
 
 
