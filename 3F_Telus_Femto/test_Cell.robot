@@ -211,29 +211,13 @@ LTE Check QEMS Connected            #정상동작 확인
         
     Open Connection Jenkins Server
 
-    #Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-    #${cmd}=    Catenate    SEPARATOR=    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-    #Write    ${cmd}
+    Write    '''curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}' '''
 
-# 1) 정확한 명령 문자열 (공백 1칸 보장)
-    ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-
-    # 커맨드 실행
-    Write    ${cmd}
-
-    # curl 끝 신호까지 읽기 (keep-alive or close 모두 대응)
-    ${raw}=    Read Until Regexp    (?m)^\\* (Connection #\\d+ to host .+ left intact|Closing connection \\d+)\\r?$
-
-    # 본문만 남기고 검증 (curl -v 디버그 라인 제거)
-    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
-
-
-    # ${qems_status}=    Read Until Prompt    strip_prompt=True
-    # ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
-    # Should Contain    ${clean_output}    "Status":"ServiceOn"
-    # Should Contain    ${clean_output}    441CA25X000019
-    # Set Test Message   QEMS status=${clean_output}
+    ${qems_status}=    Read Until Prompt    strip_prompt=True
+    ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
+    Should Contain    ${clean_output}    "Status":"ServiceOn"
+    Should Contain    ${clean_output}    441CA25X000019
+    Set Test Message   QEMS status=${clean_output}
 
 
    
