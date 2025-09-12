@@ -68,13 +68,17 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp             (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration      encoding=UTF-8    newline=\n
+    #Set Client Configuration      encoding=UTF-8    newline=\n
     
-    # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
-    Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
-    Write    export TERM=dumb; unset PROMPT_COMMAND
-    Write    ${EMPTY}
+    Set Client Configuration    prompt=#${SPACE}
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
+
+    # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
+    # Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    # Write    export TERM=dumb; unset PROMPT_COMMAND
+    # Write    ${EMPTY}
+    # Read Until Prompt             strip_prompt=True
 
 
 Open Connection SSH Druid Core
