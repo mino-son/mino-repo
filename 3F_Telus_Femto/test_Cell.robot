@@ -212,30 +212,31 @@ LTE Check QEMS Connected            #정상동작 확인
         
     Open Connection Jenkins Server
 
-    # 1) 명령을 '정확히 그 줄 그대로' 한 문자열로 만든다 (공백/따옴표 유지)
+    Set Client Configuration    timeout=60 seconds
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+
     ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
     Log To Console    \n===CMD===\n${cmd}\n===END===
 
-    # 2) 그대로 보낸다 (변수 한 개 = 인자 1개 → "got 4" 예방)
     Write    ${cmd}
 
-    # 3) curl -v 종료 신호까지 읽는다 (둘 다 대응: keep-alive / close)
-    ${raw}=    Read Until Regexp    (?m)^\\* (Connection #\\d+ to host .+ left intact|Closing connection \\d+)\\r?$
-    Log To Console    \n===RAW===\n${raw}\n===END===
+    # 핵심: 프롬프트가 돌아올 때까지 전부 읽기 (본문이 늦게 와도 OK)
+    ${all}=    Read Until Prompt    strip_prompt=True
+    Log To Console    \n===ALL===\n${all}\n===END===
 
-    # 4) 직후 리턴코드 확인 (명령은 그대로, 별도 줄로 $? 확인)
-    Write    echo __RC=$?
-    ${rc}=    Read Until Prompt    strip_prompt=True
-    Log To Console    \n===RC===\n${rc}\n===END===
+    # JSON만 뽑기: 마지막 {...} (여러 개여도 마지막이 본문인 경우가 많음)
+    ${matches}=    Get Regexp Matches    ${all}    (?s)\\{.*?\\}
+    ${n}=          Get Length    ${matches}
+    Run Keyword If    ${n} > 0    ${json}=    Get From List    ${matches}    ${n - 1}
+    Run Keyword If    ${n} > 0    Log To Console    \n===JSON(last)===\n${json}\n===END===
 
-    # 5) -v 디버그 라인(*,<,>) 제거 → 본문만 남김
-    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    Log To Console    \n===BODY===\n${body}\n===END===
+    # 검증은 전체/또는 json 어느 쪽이든
+    Should Match Regexp    ${all}    "Status"\\s*:\\s*"ServiceOn"
+    # 또는: Run Keyword If    ${n} > 0    Should Match Regexp    ${json}    "Status"\\s*:\\s*"ServiceOn"
 
-    # 6) 검증 및 메시지
-    Should Contain    ${body}    "Status":"ServiceOn"
-    Set Test Message    QEMS status=${body}
-
+    Set Test Message    QEMS status=${json}
+    
+    Close All Connections
 
 
     # Write    '''curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}' '''
@@ -245,11 +246,7 @@ LTE Check QEMS Connected            #정상동작 확인
     # Should Contain    ${clean_output}    "Status":"ServiceOn"
     # Should Contain    ${clean_output}    441CA25X000019
     # Set Test Message   QEMS status=${clean_output}
-
-
    
-
-    Close all connections
 
 # LTE Sync Source NTP status
 #     Open Connection And Log In LTE
