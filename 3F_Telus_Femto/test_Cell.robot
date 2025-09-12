@@ -222,6 +222,21 @@ LTE Check QEMS Connected            #정상동작 확인
 
 # 2) 실행 & 원본 캡처
     Write    ${cmd}
+
+    # 1) curl 실행
+    Write    ${cmd}
+
+# 2) 원본 캡처 (프롬프트까지)
+    ${raw}=    Read Until Prompt    strip_prompt=True
+    Log To Console    \n===RAW===\n${raw}\n===END===
+
+# 3) 직후 리턴코드 확인(명령 변경 아님, 별도 줄)
+    Write    echo __RC=$?
+    ${rc_line}=    Read Until Prompt    strip_prompt=True
+    Log To Console    \n===RC===\n${rc_line}\n===END===
+
+# 4) JSON이 원본 어딘가에 있는지 바로 확인(임시)
+    Should Contain    ${raw}    "Status":"ServiceOn"
     ${raw}=    Read Until Prompt    strip_prompt=True
 
 # 3) -v 디버그 라인 제거 → 본문만
