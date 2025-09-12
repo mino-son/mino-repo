@@ -157,6 +157,7 @@ LTE Check ToD Sync         #정상동작 확인
     [Documentation]    ToD Synchronized 정상 동작 확인
     ...
     ...                idm oam -x ls Device.Time 입력 후, 하기 내용 확인
+    ...    
     ...                [Status = Synchronized]
     [Tags]    LTE PnP
     ...       LTE Sanity
@@ -177,7 +178,7 @@ LTE Check ToD Sync         #정상동작 확인
     ## clean_output을 이용해 개행문자 제외
     ${clean_output}=    Replace String Using Regexp    ${output_device_time}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
 
-    Set Test Message    idm oam -x ls Device.Time=${clean_output}${\n}  ToD_Delta=${delta}
+    Set Test Message    idm oam -x ls Device.Time=${clean_output}${\n}ToD_Delta=${delta}
 
     Close all connections
 
