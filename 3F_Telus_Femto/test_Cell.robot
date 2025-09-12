@@ -336,6 +336,30 @@ Check NR Cell Active In CLI
     Set Test Message   Cell status=${output_status}
     Close all connections
 
+Debug Chat GPT
+    Open Connection And Log In NR
+ # 1) 셸 프롬프트(#)로 동기화 + 확인 로그
+    Set Client Configuration    timeout=20 seconds
+    Set Client Configuration    prompt=REGEXP:[#] ?$
+    Write    ${EMPTY}
+    ${shell}=    Read Until Prompt    strip_prompt=True
+    Log To Console    ===SHELL_PROMPT===\n${shell}\n===END===
+
+# 2) nrctl 진입 → '>' 프롬프트 포착 후, 기대 프롬프트를 '>'로 전환
+    Write    nrctl
+    ${gt_seen}=    Read Until Regexp    (?m)[>]\\s*$
+    Log To Console    ===NRCTL_PROMPT_SEEN===\n${gt_seen}\n===END===
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*$
+
+# 3) 상태 조회 → 이제는 '>' 기준으로 안정적으로 읽힘
+    Write    show status
+    ${output_status}=    Read Until Prompt    strip_prompt=True
+    Log    ${output_status}
+    Should Contain    ${output_status}    cellState: Active
+    Should Contain    ${output_status}    operationalState: Enabled
+    
+    Close all connections
+
 NR Cell ToD Sync complete
     [Documentation]    Checking NR Cell Tod Sync
     [Tags]    NR PnP
