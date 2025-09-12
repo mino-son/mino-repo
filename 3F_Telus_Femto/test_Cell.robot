@@ -214,13 +214,12 @@ LTE Check QEMS Connected            #정상동작 확인
 
     # 1) ‘그대로’ 한 문자열로 만든다 (명령 내용 절대 변경 없음)
     ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
-    Log To Console    \n===CMD===\n${cmd}\n===END===
 
     # 2) 대화형 Write 대신, 단발 실행으로 stdout/stderr/rc 모두 받기
     ${out}    ${err}    ${rc}=    Execute Command    ${cmd}    return_stdout=True    return_stderr=True    return_rc=True    timeout=60s
-    Log To Console    \n===RC===\n${rc}\n===END===
-    Log To Console    \n===STDOUT===\n${out}\n===END===
-    Log To Console    \n===STDERR===\n${err}\n===END===
+    #Log To Console    \n===RC===\n${rc}\n===END===
+    #Log To Console    \n===STDOUT===\n${out}\n===END===
+    #Log To Console    \n===STDERR===\n${err}\n===END===
 
     # 3) -v의 디버그는 주로 STDERR로 나오므로 합쳐서 본문 추출
     ${merged}=    Catenate    SEPARATOR=\n    ${out}    ${err}
@@ -230,7 +229,10 @@ LTE Check QEMS Connected            #정상동작 확인
 
     # 4) 검증
     Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
+    Should Contain    ${body}    "Status":"ServiceOn"
+    Should Contain    ${body}    441CA25X000019
     Set Test Message       QEMS status=${body}
+
 
     Close All Connections
 
