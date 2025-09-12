@@ -155,7 +155,9 @@ Check LTE Cell Status In CLI
 
 LTE Check ToD Sync         #정상동작 확인
     [Documentation]    ToD Synchronized 정상 동작 확인
-    ...                idm oam -x ls Device.Time 출력 결과 중, Status = Synchronized 를 확인
+    ...
+    ...                idm oam -x ls Device.Time 입력 후, 하기 내용 확인
+    ...                [Status = Synchronized]
     [Tags]    LTE PnP
     ...       LTE Sanity
     Open Connection And Log In LTE
@@ -175,14 +177,15 @@ LTE Check ToD Sync         #정상동작 확인
     ## clean_output을 이용해 개행문자 제외
     ${clean_output}=    Replace String Using Regexp    ${output_device_time}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
 
-    Set Test Message   ToD=${clean_output}
-    Set Test Message   ToD=${delta}        #추가했음, 문제시 삭제
+    Set Test Message    idm oam -x ls Device.Time=${clean_output}${\n}  ToD_Delta=${delta}
 
     Close all connections
 
 LTE Check IPSEC Tunnel complete        #정상동작 확인
     [Documentation]    IPSec Connected 확인
-    ...                idm oam -x status 의 결과 중, "Virtual IP: up" 체크
+    ...
+    ...                idm oam -x status 입력 후, 하기 내용 확인
+    ...                [Virtual IP: up] 
     [Tags]    LTE PnP
     ...       LTE Sanity
     Open Connection And Log In LTE
@@ -235,7 +238,9 @@ LTE Check QEMS Connected            #정상동작 확인
 
 LTE Sync Source EXT_PPS status
     [Documentation]    synchronization (EXTPPS) 동작 확인 (LTE Cell Sync)
-    ...                idm oam -x syncmgrstate 입력 시, [Active Sync Source : EXTPPS], [Sync Manager State : DISP] 출력 확인
+    ...                
+    ...                idm oam -x syncmgrstate 입력 후, 하기 내용 확인
+    ...                [Active Sync Source : EXTPPS], [Sync Manager State : DISP]
     [Tags]  LTE Sanity
     ...     LTE PnP
     Open Connection And Log In LTE
@@ -327,7 +332,9 @@ LTE Sync Source EXT_PPS status
 Check NR Cell Active In CLI
     Open Connection And Log In NR
     [Documentation]    Checking NR Cell Normal Running
-    ...                NR Cell ssh 접속 후, nrctl로 [cellState: Active], [operationalState: Enabled] 확인
+    ...
+    ...                NR Cell ssh 접속, nrctl 입력 후 하기 내용 확인
+    ...                [cellState: Active], [operationalState: Enabled]
     [Tags]   NR Sanity
     ...      NR status
 
