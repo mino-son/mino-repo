@@ -62,7 +62,6 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration    timeout=12 seconds
     Set Client Configuration    prompt=REGEXP:root@localhost:[^\n]*#\s*$
     Read Until Prompt    strip_prompt=True
     # # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
@@ -96,16 +95,20 @@ Open Connection SecGW Core
     Write    su -
     Read Until Regexp    (?i)password:
     Write    qucell12345
-    Set Client Configuration    prompt=#
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Read Until Prompt             strip_prompt=True
-
+#    Set Client Configuration    prompt=#
+#    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+#    Read Until Prompt             strip_prompt=True
+    Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Read Until Prompt    strip_prompt=True
+    
 Open Connection Jenkins Server
     SSHLibrary.Open Connection    ${jenkinsserver_ssh_connection_ip}
     SSHLibrary.Login    epc2    qucell
-    Set Client Configuration    prompt=#
+    #Set Client Configuration    prompt=#
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Read Until Prompt             strip_prompt=True
+    #Read Until Prompt             strip_prompt=True
+    Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Read Until Prompt    strip_prompt=True
 
 
 Cell Reboot And Reconnect
@@ -254,7 +257,7 @@ LTE IPSEC Down        #정상동작 확인
     Open Connection SecGW Core
     [Documentation]    IPSec (down/up repeat)
     ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) 를 Block
-    ...                IPSec Down 확인 및 idm oam -x status 입력 시 IPSec 관련 alarm 확인 [Virtual IP: down], [IPsec]
+    ...                IPSec Down 확인 및 idm oam -x status 입력 시 IPSec 관련 alarm 확인 [Virtual IP: down], [IPSec Tunnel Down]
     [Tags]      LTE Regression
     ...         LTE IPsec
 
@@ -276,35 +279,35 @@ LTE IPSEC Down        #정상동작 확인
     Write    idm oam -x alarm
     ${output_alarm_status}=    Read Until Prompt  strip_prompt=True
     Log      ${output_alarm_status}
-    Should Contain    ${output_mme_status}     IPsec
+    Should Contain    ${output_mme_status}     IPSec Tunnel Down
     Set Test Message   Cell Alarm after IPSec Down=${output_mme_status}
     Close all connections
 
 
-# LTE IPSEC Up & Cell up Checking        #정상동작 확인
-#     Open Connection SecGW Core
-#     [Documentation]    IPSec (down/up repeat)
-#     ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) Block Table 제거
-#     ...                IPSec Up 확인 및 idm oam -x status 입력 시 IPSec Up 확인 [StackRunning: 1, RFTxStatus: 1, Number of Active MMEs: 1, AdminState: 1]
-#     [Tags]      LTE Regression
-#     ...         LTE IPsec
+LTE IPSEC Up & Cell up Checking        #정상동작 확인
+    Open Connection SecGW Core
+    [Documentation]    IPSec (down/up repeat)
+    ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) Block Table 제거
+    ...                IPSec Up 확인 및 idm oam -x status 입력 시 IPSec Up 확인 [StackRunning: 1, RFTxStatus: 1, Number of Active MMEs: 1, AdminState: 1]
+    [Tags]      LTE Regression
+    ...         LTE IPsec
 
-#     Write   iptables -D INPUT  -s ${lte_cell_ssh_connection_ip} -j DROP
-#     Write   iptables -D OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-#     Keepalive Loop Interval  2  60 s
-#     Close all connections
+    Write   iptables -D INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    Write   iptables -D OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    Keepalive Loop Interval  2  60 s
+    Close all connections
 
-#     Open Connection And Log In LTE
+    Open Connection And Log In LTE
 
-#     Write    idm oam -x status
-#     ${output_status}=    Read Until Prompt
-#     log     ${output_status}
-#     Should Contain    ${output_status}    StackRunning: 1
-#     Should Contain    ${output_status}    RFTxStatus: 1
-#     Should Contain    ${output_status}    Number of Active MMEs: 1
-#     Should Contain    ${output_status}    AdminState: 1
-#     Set Test Message   Cell Status After IPSec Up =${output_status}
-#     Close all connections
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     ${output_status}
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Should Contain    ${output_status}    AdminState: 1
+    Set Test Message   Cell Status After IPSec Up =${output_status}
+    Close all connections
 
 # Reboot LTE Pico From QEMS(API)            ##정상동작 확인 필요 - 코드 수정
 #     [Documentation]    Reboot system (EMS) - LTE Cell
@@ -359,7 +362,7 @@ NR Check IPSEC Tunnel complete
     ${clean_output}=    Replace String Using Regexp    ${nr_ipsec_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
     Should Contain    ${clean_output}    ESTABLISHED
     Should Contain    ${clean_output}    INSTALLED
-    Should Contain    ${clean_output}    TUNNEL
+    Should Contain    ${clean_output}    IPSec Tunnel Down
     Set Test Message   NR IPSec status=${clean_output}
 
     Close all connections
