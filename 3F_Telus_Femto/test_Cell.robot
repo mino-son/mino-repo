@@ -36,31 +36,6 @@ ${GENERIC_PROMPT_RE}    (?m)(?:\\x1b\\[[0-9;]*m)*[^\\n]*[#$] ?$
 ${ROOT_SENTINEL}        __NR_ROOT__# 
 
 *** Keywords ***    ##################################################
-Open Connection And Log In NR
-    SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}
-    SSHLibrary.Login              ${nr_user_id}    ${nr_user_pass}
-    Write    su -
-    Read Until Regexp    (?i)password:
-    Write    ${nr_root_pass}
-
-    # ── 디버그 스냅샷 (프롬프트 안 기다리고 현재 화면과 환경 확인)
-    Set Log Level    TRACE
-    Write    ${EMPTY}
-    Sleep    0.4s
-    ${snap}=    Read
-    Log To Console    ===SNAP===\n${snap}\n===END===
-    Write    printf 'PS1<<%s>> TERM=%s\n' "$PS1" "$TERM"
-    Sleep    0.4s
-    ${env}=    Read
-    Log To Console    ===ENV===\n${env}\n===END===
-
-    # ── 프롬프트를 [# 또는 $] + ANSI 허용으로 관대하게 잡고, 한 번 동기화
-    Set Client Configuration    timeout=20 seconds
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
-    Write    export TERM=dumb; unset PROMPT_COMMAND
-    ${shell}=    Read Until Prompt    strip_prompt=True
-    Log To Console    ===SHELL_PROMPT_SEEN===\n${shell}\n===END===
-
 Keepalive Loop Interval
     [Arguments]    ${loops}=14    ${interval}=60 s    ${marker}=__KA__
     FOR    ${i}    IN RANGE    ${loops}
@@ -87,16 +62,17 @@ Open Connection And Log In LTE
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
     Read Until Prompt             strip_prompt=True
 
-# Open Connection And Log In NR
-#     SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}
-#     SSHLibrary.Login              ${nr_user_id}    ${nr_user_pass}
-#     Write    su -
-#     Read Until Regexp    (?i)password:
-#     Write    ${nr_root_pass}
+Open Connection And Log In NR
+    SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}
+    SSHLibrary.Login              ${nr_user_id}    ${nr_user_pass}
+    Write    su -
+    Read Until Regexp             (?i)password:
+    Write    ${nr_root_pass}
 
-#     Set Client Configuration      prompt=# 
-#     Read Until Prompt             strip_prompt=True
-
+    # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
+    Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Write    export TERM=dumb; unset PROMPT_COMMAND
+    Read Until Prompt             strip_prompt=True
 
 
 Open Connection SSH Druid Core
@@ -354,24 +330,14 @@ LTE Sync Source EXT_PPS status
 #########################################################################################
 
 
-Debug 222
+Check NR Cell Active In CLI
     Open Connection And Log In NR
+    Sync Shell Prompt
 
-    # 1) 셸 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
-    Set Client Configuration    timeout=20 seconds
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
-    Write    export TERM=dumb; unset PROMPT_COMMAND
-    ${flush}=    Read Until Prompt    strip_prompt=True
-    Log To Console    ===SHELL_SYNC===\n${flush}\n===END===
-
-    # 2) nrctl 실행 → 셸 프롬프트(#)가 다시 나올 때까지 읽기
-    Write    nrctl
-    ${out}=    Read Until Prompt    strip_prompt=True
-    Log To Console    ===NRCTL_OUT===\n${out}\n===END===
-
-    # 3) 검증
-    Should Contain    ${out}    cellState: Active
-    Should Contain    ${out}    operationalState: Enabled
+    ${output_status}=    Run    nrctl
+    Log    ${output_status}
+    Should Contain    ${output_status}    cellState: Active
+    Should Contain    ${output_status}    operationalState: Enabled
 
     Close All Connections
 
