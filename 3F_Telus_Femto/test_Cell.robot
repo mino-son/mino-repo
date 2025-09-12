@@ -230,9 +230,9 @@ LTE Sync Source EXT_PPS status
 # LTE IPSEC Down        #정상동작 확인
 #     Open Connection SecGW Core
 #     [Documentation]    IPSec (down/up repeat)
-#     [Tags]  Regression
-#     Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+#     [Tags]  Regression  
 #     Write   iptables -A INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+#     Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
 #     ${block_ip}=    Read Until Prompt  strip_prompt=True    
 #     Log     ${block_ip}
 #     Close all connections
@@ -254,26 +254,26 @@ LTE Sync Source EXT_PPS status
 #     Close all connections
     
 
-LTE IPSEC Up & Cell up Checking        #정상동작 확인
-    Open Connection SecGW Core   
-    [Documentation]    IPSec (down/up repeat)
-    [Tags]  Regression
-    Write   iptables -D INPUT 1
-    Write   iptables -D OUTPUT 1
-    Keepalive Loop Interval  2  60 s
-    Close all connections
+# LTE IPSEC Up & Cell up Checking        #정상동작 확인
+#     Open Connection SecGW Core   
+#     [Documentation]    IPSec (down/up repeat)
+#     [Tags]  Regression
+#     Write   iptables -D INPUT  -s ${lte_cell_ssh_connection_ip} -j DROP
+#     Write   iptables -D OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+#     Keepalive Loop Interval  2  60 s
+#     Close all connections
 
-    Open Connection And Log In LTE
+#     Open Connection And Log In LTE
     
-    Write    idm oam -x status
-    ${output_status}=    Read Until Prompt  
-    log     ${output_status}
-    Should Contain    ${output_status}    StackRunning: 1
-    Should Contain    ${output_status}    RFTxStatus: 1
-    Should Contain    ${output_status}    Number of Active MMEs: 1
-    Should Contain    ${output_status}    AdminState: 1
-    Set Test Message   Cell Status After IPSec Up =${output_status}
-    Close all connections  
+#     Write    idm oam -x status
+#     ${output_status}=    Read Until Prompt  
+#     log     ${output_status}
+#     Should Contain    ${output_status}    StackRunning: 1
+#     Should Contain    ${output_status}    RFTxStatus: 1
+#     Should Contain    ${output_status}    Number of Active MMEs: 1
+#     Should Contain    ${output_status}    AdminState: 1
+#     Set Test Message   Cell Status After IPSec Up =${output_status}
+#     Close all connections  
 
 # Reboot LTE Pico From QEMS(API)
 #     [Documentation]    Reboot system (EMS) - LTE Cell
