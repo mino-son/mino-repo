@@ -69,9 +69,13 @@ Open Connection And Log In NR
     Read Until Regexp             (?i)password:
     Write    ${nr_root_pass}
       
-    Set Client Configuration      timeout=10 seconds
-    Set Client Configuration      prompt=REGEXP:(?m)(?:\\x1B\\[[0-9;?]*[ -/]*[@-~]|\\x1B\\][^\\x07]*\\x07|\\x1B.)*#[ ]$
-    Write    export TERM=dumb; unset PROMPT_COMMAND
+    Set Client Configuration    encoding=UTF-8    newline=\n
+    Set Client Configuration    timeout=25 seconds
+
+# ESC(여러 타입) + 그 사이에 일반문자들 허용 + 끝은 '# '  (여기서 핵심은 [^\r\n]* )
+    Set Client Configuration    prompt=REGEXP:(?m)(?:\\x1B\\[[0-9;?]*[ -/]*[@-~]|\\x1B\\][^\\x07]*\\x07|\\x1B.)*[^\r\n]*#[ ]$
+
+    Write    export LANG=C.UTF-8; export LC_ALL=C.UTF-8; export TERM=dumb; unset PROMPT_COMMAND
     Write    ${EMPTY}
     ${prompt_seen}=    Read Until Prompt    strip_prompt=True
     Log To Console    ===PROMPT_OK===\n${prompt_seen}\n===END===
