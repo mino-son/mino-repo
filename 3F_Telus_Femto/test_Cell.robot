@@ -68,6 +68,21 @@ Open Connection And Log In NR
     Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="# "
     Read Until Prompt    strip_prompt=True    # 잔여 ANSI/배너 플러시    
 
+
+        # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
+    Set Log Level    TRACE
+    Write                                 # 빈 줄 → 프롬프트 강제 출력
+    ${snap0}=    Read    delay=1s
+    Log To Console    ===PROMPT_SNAPSHOT===\n${snap0}\n===END===
+
+    Write    printf 'PS1_RAW<<%s>>\n' "$PS1"
+    ${ps1}=    Read    delay=1s
+    Log To Console    ===PS1===\n${ps1}\n===END===
+
+    Write    echo "TERM=$TERM"; echo "PROMPT_COMMAND=$PROMPT_COMMAND"
+    ${env}=    Read    delay=1s
+    Log To Console    ===ENV===\n${env}\n===END===
+
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
     SSHLibrary.Login    root    qucell12345
