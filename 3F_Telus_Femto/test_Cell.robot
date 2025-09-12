@@ -360,6 +360,40 @@ Debug Chat GPT
     
     Close all connections
 
+Debug 222
+# 0) 디버그 스냅샷: 현재 화면/PS1/TERM 확인 (프롬프트 필요 없음)
+    Set Log Level    TRACE
+    Write    ${EMPTY}
+    Sleep    0.4s
+    ${snap}=    Read
+    Log To Console    ===SNAP===\n${snap}\n===END===
+    Write    printf 'PS1<<%s>> TERM=%s\n' "$PS1" "$TERM"
+    Sleep    0.4s
+    ${env}=    Read
+    Log To Console    ===ENV===\n${env}\n===END===
+
+# 1) 셸 프롬프트 동기화 (ANSI 허용 + #/$ 모두 허용)
+    Set Client Configuration    timeout=20 seconds
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Write    export TERM=dumb; unset PROMPT_COMMAND
+    ${shell}=    Read Until Prompt    strip_prompt=True
+    Log To Console    ===SHELL_PROMPT_SYNCED===\n${shell}\n===END===
+
+# 2) nrctl 진입 → '>' 프롬프트로 전환 (ANSI 허용)
+    Write    nrctl
+    ${gt_seen}=    Read Until Regexp    (?m)(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*$
+    Log To Console    ===NRCTL_PROMPT_SEEN===\n${gt_seen}\n===END===
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+
+# 3) 상태 조회 (이제는 '>' 기준으로 안정적으로 읽힘)
+    Write    show status
+    ${output_status}=    Read Until Prompt    strip_prompt=True
+    Log    ${output_status}
+    Should Contain    ${output_status}    cellState: Active
+    Should Contain    ${output_status}    operationalState: Enabled
+
+    Close all connections
+
 NR Cell ToD Sync complete
     [Documentation]    Checking NR Cell Tod Sync
     [Tags]    NR PnP
