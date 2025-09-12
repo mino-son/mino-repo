@@ -257,77 +257,82 @@ LTE Sync Source EXT_PPS status
     Close all connections
 
 
-# LTE IPSEC Down        #정상동작 확인
-#     Open Connection SecGW Core
-#     [Documentation]    IPSec (down/up repeat)
-#     ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) 를 Block
-#     ...                IPSec Down 확인 및 idm oam -x status 입력 시 IPSec 관련 alarm 확인 [Virtual IP: down], [IPSec Tunnel Down]
-#     [Tags]      LTE Regression
-#     ...         LTE IPsec
+LTE IPSEC Down        #정상동작 확인
+    Open Connection SecGW Core
+    [Documentation]    IPSec (down/up repeat)
+    ...
+    ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) 를 Block
+    ...
+    ...                IPSec Down 확인 및 idm oam -x status 입력 시 IPSec 관련 alarm 확인 [Virtual IP: down], [IPSec Tunnel Down]
+    [Tags]      LTE Regression
+    ...         LTE IPsec
 
-#     Write   iptables -A INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-#     Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-#     ${block_ip}=    Read Until Prompt  strip_prompt=True
-#     Log     ${block_ip}
-#     Close all connections
-#     Sleep  5s
+    Write   iptables -A INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    Write   iptables -A OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    ${block_ip}=    Read Until Prompt  strip_prompt=True
+    Log     ${block_ip}
+    Close all connections
+    Sleep  5s
 
-#     Open Connection And Log In LTE
-#     Keepalive Loop Interval  13  60 s
+    Open Connection And Log In LTE
+    Keepalive Loop Interval  13  60 s
 
-#     Write    idm oam -x status
-#     ${output_mme_status}=    Read Until Prompt  strip_prompt=True
-#     Log      ${output_mme_status}
-#     Should Contain    ${output_mme_status}     Virtual IP: down
+    Write    idm oam -x status
+    ${output_mme_status}=    Read Until Prompt  strip_prompt=True
+    Log      ${output_mme_status}
+    Should Contain    ${output_mme_status}     Virtual IP: down
 
-#     Write    idm oam -x alarm
-#     ${output_alarm_status}=    Read Until Prompt  strip_prompt=True
-#     Log      ${output_alarm_status}
-#     Should Contain    ${output_mme_status}     IPSec Tunnel Down
-#     Set Test Message   Cell Alarm after IPSec Down=${output_mme_status}
-#     Close all connections
+    Write    idm oam -x alarm
+    ${output_alarm_status}=    Read Until Prompt  strip_prompt=True
+    Log      ${output_alarm_status}
+    Should Contain    ${output_mme_status}     IPSec Tunnel Down
+    Set Test Message   Cell Alarm after IPSec Down=${output_mme_status}
+    Close all connections
 
 
-# LTE IPSEC Up & Cell up Checking        #정상동작 확인
-#     Open Connection SecGW Core
-#     [Documentation]    IPSec (down/up repeat)
-#     ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) Block Table 제거
-#     ...                IPSec Up 확인 및 idm oam -x status 입력 시 IPSec Up 확인 [StackRunning: 1, RFTxStatus: 1, Number of Active MMEs: 1, AdminState: 1]
-#     [Tags]      LTE Regression
-#     ...         LTE IPsec
+LTE IPSEC Up & Cell up Checking        #정상동작 확인
+    Open Connection SecGW Core
+    [Documentation]    IPSec (down/up repeat)
+    ...
+    ...                SecGW 접속 후, LTE Device의 Inner IP (172.30.100.xxx) Block Table 제거
+    ...    
+    ...                IPSec Up 확인 및 idm oam -x status 입력 시 IPSec Up 확인 [StackRunning: 1, RFTxStatus: 1, Number of Active MMEs: 1, AdminState: 1]
+    [Tags]      LTE Regression
+    ...         LTE IPsec
 
-#     Write   iptables -D INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-#     Write   iptables -D OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
-#     Keepalive Loop Interval  5  60 s
-#     Close all connections
+    Write   iptables -D INPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    Write   iptables -D OUTPUT -s ${lte_cell_ssh_connection_ip} -j DROP
+    Keepalive Loop Interval  5  60 s
+    Close all connections
 
-#     Open Connection And Log In LTE
+    Open Connection And Log In LTE
 
-#     Write    idm oam -x status
-#     ${output_status}=    Read Until Prompt
-#     log     ${output_status}
-#     Should Contain    ${output_status}    StackRunning: 1
-#     Should Contain    ${output_status}    RFTxStatus: 1
-#     Should Contain    ${output_status}    Number of Active MMEs: 1
-#     Should Contain    ${output_status}    AdminState: 1
-#     Set Test Message   Cell Status After IPSec Up =${output_status}
-#     Close all connections
+    Write    idm oam -x status
+    ${output_status}=    Read Until Prompt
+    log     ${output_status}
+    Should Contain    ${output_status}    StackRunning: 1
+    Should Contain    ${output_status}    RFTxStatus: 1
+    Should Contain    ${output_status}    Number of Active MMEs: 1
+    Should Contain    ${output_status}    AdminState: 1
+    Set Test Message   Cell Status After IPSec Up =${output_status}
+    Close all connections
 
-# Reboot LTE Pico From QEMS(API)            ##정상동작 확인 필요 - 코드 수정
-#     [Documentation]    Reboot system (EMS) - LTE Cell
-#     ...                QEMS API으로 LTE Cell Reboot 후, Cell Up statue 확인
-#     [Tags]             LTE Regression
-#     ...                QEMS
+Reboot LTE Pico From QEMS(API)            ##정상동작 확인 필요 - 코드 수정
+    [Documentation]    Reboot system (EMS) - LTE Cell
+    ...
+    ...                QEMS API으로 LTE Cell Reboot 후, Cell Up statue 확인
+    [Tags]             LTE Regression
+    ...                QEMS
 
-#     Open Connection Jenkins Server
-#     Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"RebootLTE","serialNumber":"441CA25X000019"}'
-#     Close all connections
+    Open Connection Jenkins Server
+    Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"RebootLTE","serialNumber":"441CA25X000019"}'
+    Close all connections
 
-#     Sleep    180s
-#     Open Connection And Log In LTE
-#     Check LTE Cell Status In CLI
-#     Set Test Message   Cell Status After IPSec Up =${output_status}
-#     Close all connections
+    Sleep    180s
+    Open Connection And Log In LTE
+    Check LTE Cell Status In CLI
+    Set Test Message   Cell Status After IPSec Up =${output_status}
+    Close all connections
 
 
 #########################################################################################
