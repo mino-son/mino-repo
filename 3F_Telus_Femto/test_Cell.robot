@@ -222,16 +222,16 @@ LTE Check QEMS Connected            #정상동작 확인
     #Log To Console    \n===STDERR===\n${err}\n===END===
 
     # 3) -v의 디버그는 주로 STDERR로 나오므로 합쳐서 본문 추출
-    ${merged}=    Catenate    SEPARATOR=\n    ${out}    ${err}
+    #${merged}=    Catenate    SEPARATOR=\n    ${out}    ${err}
     # 디버그/헤더(*,<,>) 줄 제거 → 본문만
-    ${body}=    Replace String Using Regexp    ${merged}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    Log To Console    \n===BODY===\n${body}\n===END===
+    #${body}=    Replace String Using Regexp    ${merged}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
+    #Log To Console    \n===BODY===\n${body}\n===END===
 
     # 4) 검증
-    Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
-    Should Contain    ${body}    "Status":"ServiceOn"
-    Should Contain    ${body}    441CA25X000019
-    Set Test Message       QEMS status=${body}
+    # Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
+    Should Contain    ${out}    "Status":"ServiceOn"
+    Should Contain    ${out}    441CA25X000019
+    Set Test Message       QEMS status=${out}
 
 
     Close All Connections
