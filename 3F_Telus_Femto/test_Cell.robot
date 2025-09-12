@@ -62,37 +62,27 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    
-    # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
-    Set Log Level    TRACE
+    Set Client Configuration    timeout=12 seconds
+    Set Client Configuration    prompt=REGEXP:root@localhost:[^\n]*#\s*$
+    Read Until Prompt    strip_prompt=True
+    # # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
+    # Set Log Level    TRACE
 
-    Write    ${EMPTY}
-    Sleep    0.5s
-    ${snap0}=    Read
-    Log To Console    ===PROMPT_SNAPSHOT===\n${snap0}\n===END===
+    # Write    ${EMPTY}
+    # Sleep    0.5s
+    # ${snap0}=    Read
+    # Log To Console    ===PROMPT_SNAPSHOT===\n${snap0}\n===END===
 
-    Write    printf 'PS1_RAW<<%s>>\n' "$PS1"
-    Sleep    0.5s
-    ${ps1}=    Read
-    Log To Console    ===PS1===\n${ps1}\n===END===
+    # Write    printf 'PS1_RAW<<%s>>\n' "$PS1"
+    # Sleep    0.5s
+    # ${ps1}=    Read
+    # Log To Console    ===PS1===\n${ps1}\n===END===
 
-    Write    echo "TERM=$TERM"; echo "PROMPT_COMMAND=$PROMPT_COMMAND"
-    Sleep    0.5s
-    ${env}=    Read
-    Log To Console    ===ENV===\n${env}\n===END===
-
-    # (프롬프트 패턴은 이 출력 보고 확정하자)
-
-
-
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$  
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="# "
-    Read Until Prompt    strip_prompt=True    # 잔여 ANSI/배너 플러시    
-
-
-
-
+    # Write    echo "TERM=$TERM"; echo "PROMPT_COMMAND=$PROMPT_COMMAND"
+    # Sleep    0.5s
+    # ${env}=    Read
+    # Log To Console    ===ENV===\n${env}\n===END===
+  
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
     SSHLibrary.Login    root    qucell12345
