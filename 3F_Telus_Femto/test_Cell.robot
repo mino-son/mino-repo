@@ -327,8 +327,8 @@ Check NR Cell Active In CLI
     Open Connection And Log In NR
     [Documentation]    Checking NR Cell Normal Running
     ...                NR Cell ssh 접속 후, nrctl로 [cellState: Active], [operationalState: Enabled] 확인
-    [Tags]   NR status
-    ...      NR Sanity
+    [Tags]   NR Sanity
+    ...      NR status
 
     Write    nrctl
     ${output_status}=    Read Until Prompt  strip_prompt=True    
@@ -337,39 +337,45 @@ Check NR Cell Active In CLI
     Set Test Message   Cell status=${output_status}
     Close all connections
 
-# NR Cell ToD Sync complete
-#     [Documentation]    Checking NR Cell Tod Sync
-#     [Tags]    NR PnP
-#     Open Connection And Log In NR
-#     Write    nrctl
-#     ${nr_tod_status}=    Read Until Prompt    strip_prompt=True
+NR Cell ToD Sync complete
+    [Documentation]    Checking NR Cell Tod Sync
+    ...                NR Cell ssh 접속 후, nrctl로 [NTP Status: SYNCHRONIZED] 확인
+    [Tags]    NR Sanity
+    ...       NR PnP
+    Open Connection And Log In NR
+    Write    nrctl
+    ${nr_tod_status}=    Read Until Prompt    strip_prompt=True
 
-#     Should Contain    ${nr_tod_status}    NTP Status: SYNCHRONIZED
-#     Set Test Message   ToD status=${nr_tod_status}
-#     Close all connections
+    Should Contain    ${nr_tod_status}    NTP Status: SYNCHRONIZED
+    Set Test Message   ToD status=${nr_tod_status}
+    Close all connections
 
-# NR Check IPSEC Tunnel complete
-#     [Documentation]    NR IPSec Connected 확인
-#     [Tags]    NR PnP
-#     Open Connection And Log In NR
+NR Check IPSEC Tunnel complete
+    [Documentation]    NR IPSec Connected 확인
+    ...                NR Cell ssh 접속 후, swanctl -l 로 [ESTABLISHED], [INSTALLED], [TUNNEL] 확인
+    [Tags]    NR Sanity
+    ...       NR PnP
+    Open Connection And Log In NR
 
-#     Write    swanctl -l
-#     ${nr_ipsec_status}=    Read Until Prompt    strip_prompt=True
-#     ${clean_output}=    Replace String Using Regexp    ${nr_ipsec_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
-#     Should Contain    ${clean_output}    ESTABLISHED
-#     Should Contain    ${clean_output}    INSTALLED
-#     Should Contain    ${clean_output}    IPSec Tunnel Down
-#     Set Test Message   NR IPSec status=${clean_output}
+    Write    swanctl -l
+    ${nr_ipsec_status}=    Read Until Prompt    strip_prompt=True
+    ${clean_output}=    Replace String Using Regexp    ${nr_ipsec_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+    Should Contain    ${clean_output}    ESTABLISHED
+    Should Contain    ${clean_output}    INSTALLED
+    Should Contain    ${clean_output}    TUNNEL
+    Set Test Message   NR IPSec status=${clean_output}
 
-#     Close all connections
+    Close all connections
 
-# NR Cell Sync Source complete
-#     [Documentation]    Checking NR Cell Sync Locked
-#     [Tags]    NR PnP
-#     Open Connection And Log In NR
-#     Write    sysrepocfg -X -mo-ran-sync -doperational
-#     ${nr_sync_status}=    Read Until Prompt    strip_prompt=True
+NR Cell Sync Source complete
+    [Documentation]    Checking NR Cell Sync Locked
+    ...                NR Cell ssh 접속 후, sysrepocfg -X -mo-ran-sync -doperational 로 [Sync Status : LOCKED] 확인
+    [Tags]    NR Sanity
+    ...       NR PnP 
+    Open Connection And Log In NR
+    Write    sysrepocfg -X -mo-ran-sync -doperational
+    ${nr_sync_status}=    Read Until Prompt    strip_prompt=True
 
-#     Should Contain    ${nr_sync_status}    <sync-state>LOCKED</sync-state>
-#     Set Test Message   Sync Source status=${nr_sync_status}
-#     Close all connections
+    Should Contain    ${nr_sync_status}    <sync-state>LOCKED</sync-state>
+    Set Test Message   Sync Source status=${nr_sync_status}
+    Close all connections
