@@ -331,13 +331,18 @@ LTE Sync Source EXT_PPS status
 
 
 Check NR Cell Active In CLI
+    [Documentation]    Checking NR Cell Active
+    ...                NR Cell ssh 접속 후, nrctl 입력하여 [cellState: Active], [operationalState: Enabled] 확인
+    [Tags]   NR status    
     Open Connection And Log In NR
+
     Sync Shell Prompt
 
     ${output_status}=    Run    nrctl
-    Log    ${output_status}
+    
     Should Contain    ${output_status}    cellState: Active
     Should Contain    ${output_status}    operationalState: Enabled
+    Set Test Message    =${output_status}
 
     Close All Connections
 
