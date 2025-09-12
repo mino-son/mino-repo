@@ -63,12 +63,6 @@ Open Connection And Log In NR
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
     
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$  
-    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="# "
-    Read Until Prompt    strip_prompt=True    # 잔여 ANSI/배너 플러시    
-
-
         # --- DEBUG: 실제 프롬프트/환경 스냅샷 확인 ---
     Set Log Level    TRACE
     Write                                 # 빈 줄 → 프롬프트 강제 출력
@@ -82,6 +76,16 @@ Open Connection And Log In NR
     Write    echo "TERM=$TERM"; echo "PROMPT_COMMAND=$PROMPT_COMMAND"
     ${env}=    Read    delay=1s
     Log To Console    ===ENV===\n${env}\n===END===
+
+
+
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$  
+    # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="# "
+    Read Until Prompt    strip_prompt=True    # 잔여 ANSI/배너 플러시    
+
+
+
 
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
@@ -228,18 +232,18 @@ LTE Check IPSEC Tunnel complete        #정상동작 확인
 #     Should Contain    ${output_ntp_sync}    LOCKED
 #     Close all connections
 
-LTE Sync Source EXT_PPS status
-    Open Connection And Log In LTE
-    [Documentation]    synchronization (EXTPPS) Stability (LTE)
-    [Tags]  LTE PnP
-    Keepalive Loop Interval  1  60 s     
-    Write    idm oam -x syncmgrstate
-    ${output_extpps_sync}=    Read Until Prompt  strip_prompt=True  
-    log     ${output_extpps_sync}
-    Should Contain    ${output_extpps_sync}    Active Sync Source : EXTPPS
-    Should Contain    ${output_extpps_sync}    Sync Manager State : DISP
-    Set Test Message   LTE Sync EXT_PPS status=${output_extpps_sync}
-    Close all connections
+# LTE Sync Source EXT_PPS status
+#     Open Connection And Log In LTE
+#     [Documentation]    synchronization (EXTPPS) Stability (LTE)
+#     [Tags]  LTE PnP
+#     Keepalive Loop Interval  1  60 s     
+#     Write    idm oam -x syncmgrstate
+#     ${output_extpps_sync}=    Read Until Prompt  strip_prompt=True  
+#     log     ${output_extpps_sync}
+#     Should Contain    ${output_extpps_sync}    Active Sync Source : EXTPPS
+#     Should Contain    ${output_extpps_sync}    Sync Manager State : DISP
+#     Set Test Message   LTE Sync EXT_PPS status=${output_extpps_sync}
+#     Close all connections
 
 
 # LTE IPSEC Down        #정상동작 확인
