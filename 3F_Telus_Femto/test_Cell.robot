@@ -233,7 +233,7 @@ LTE Check QEMS Connected            #정상동작 확인
     # ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
     # Should Contain    ${clean_output}    "Status":"ServiceOn"
     # Should Contain    ${clean_output}    441CA25X000019
-    Set Test Message   QEMS status=${clean_output}
+    # Set Test Message   QEMS status=${clean_output}
 
 
    
