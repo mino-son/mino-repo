@@ -36,42 +36,30 @@ ${GENERIC_PROMPT_RE}    (?m)(?:\\x1b\\[[0-9;]*m)*[^\\n]*[#$] ?$
 ${ROOT_SENTINEL}        __NR_ROOT__# 
 
 *** Keywords ***    ##################################################
-Open Connection And Log In NR (DEBUG)
-    [Arguments]    ${nr_cell_ssh_connection_ip}    ${nr_user_id}    ${nr_user_pass}    ${nr_root_pass}
-
-    # 1) 접속 & 로그인
-    SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}    timeout=15 seconds
+Open Connection And Log In NR
+    SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}
     SSHLibrary.Login              ${nr_user_id}    ${nr_user_pass}
-
-    # 2) 현재(일반 사용자) 프롬프트를 관대한 정규식으로 먼저 잡음
-    Set Client Configuration      timeout=15 seconds    prompt_regexp=${GENERIC_PROMPT_RE}
-    ${out_before}=    Read Until Prompt    strip_prompt=False
-    Log To Console    \n--- BEFORE su PROMPT DUMP ---\n${out_before}\n-----------------------------
-
-    # 3) su - 진입
     Write    su -
-    ${pw_prompt}=    Read Until Regexp    (?i)password:
-    Log To Console    \n--- su PASSWORD PROMPT ---\n${pw_prompt}\n-------------------------
+    Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
 
-    # 4) 루트 셸에서 프롬프트를 우리가 아는 상수로 강제 세팅
-    #    (컬러/배너/모든 커스터마이징을 우회)
-    Write    PS1="${ROOT_SENTINEL} "; export PS1
+    # ── 디버그 스냅샷 (프롬프트 안 기다리고 현재 화면과 환경 확인)
+    Set Log Level    TRACE
+    Write    ${EMPTY}
+    Sleep    0.4s
+    ${snap}=    Read
+    Log To Console    ===SNAP===\n${snap}\n===END===
+    Write    printf 'PS1<<%s>> TERM=%s\n' "$PS1" "$TERM"
+    Sleep    0.4s
+    ${env}=    Read
+    Log To Console    ===ENV===\n${env}\n===END===
 
-    # 5) 이제부터는 문자열 프롬프트로 고정 매칭
-    Set Client Configuration      timeout=15 seconds    prompt=${ROOT_SENTINEL} 
-    ${out_after}=    Read Until Prompt    strip_prompt=False
-    Log To Console    \n--- AFTER su PROMPT DUMP ---\n${out_after}\n--------------------------
-
-    # 6) 동기화 & 셸 상태 점검 (id, whoami 확인)
-    Write    id -u; whoami; echo __SYNC__
-    ${sync}=    Read Until    __SYNC__
-    Log To Console    \n--- SYNC OUTPUT ---\n${sync}\n--------------------
-
-    # 7) 최종 확인: 프롬프트가 정말로 우리가 셋한 값인지 테스트
-    Write    echo PROMPT_OK
-    ${final}=    Read Until Prompt    strip_prompt=False
-    Log To Console    \n--- FINAL READ (EXPECT PROMPT) ---\n${final}\n-------------------
+    # ── 프롬프트를 [# 또는 $] + ANSI 허용으로 관대하게 잡고, 한 번 동기화
+    Set Client Configuration    timeout=20 seconds
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
+    Write    export TERM=dumb; unset PROMPT_COMMAND
+    ${shell}=    Read Until Prompt    strip_prompt=True
+    Log To Console    ===SHELL_PROMPT_SEEN===\n${shell}\n===END===
 
 Keepalive Loop Interval
     [Arguments]    ${loops}=14    ${interval}=60 s    ${marker}=__KA__
@@ -366,18 +354,21 @@ LTE Sync Source EXT_PPS status
 #########################################################################################
 
 
-Open Connection And Log In NR
-    SSHLibrary.Open Connection    ${nr_cell_ssh_connection_ip}
-    SSHLibrary.Login              ${nr_user_id}    ${nr_user_pass}
-    Write    su -
-    Read Until Regexp    (?i)password:
-    Write    ${nr_root_pass}
+Debug 222
+    Open Connection And Log In NR
 
-    Set Client Configuration      prompt=# 
-    Read Until Prompt             strip_prompt=True
+    # nrctl 진입 → '>' 프롬프트 포착 후, 기대 프롬프트를 '>'로 전환
+    Write    nrctl
+    ${gt_seen}=    Read Until Regexp    (?m)(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*$
+    Log To Console    ===NRCTL_PROMPT_SEEN===\n${gt_seen}\n===END===
+    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[>]\\s*(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
 
-Debug NR Root Prompt
-    Open Connection And Log In NR (DEBUG)    ${nr_cell_ssh_connection_ip}    ${nr_user_id}    ${nr_user_pass}    ${nr_root_pass}    
+    Write    show status
+    ${output_status}=    Read Until Prompt    strip_prompt=True
+    Log    ${output_status}
+    Should Contain    ${output_status}    cellState: Active
+    Should Contain    ${output_status}    operationalState: Enabled
+    Close All Connections
 
 # Check NR Cell Active In CLI
 #     Open Connection And Log In NR
