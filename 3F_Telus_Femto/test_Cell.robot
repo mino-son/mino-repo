@@ -217,12 +217,10 @@ LTE Check QEMS Connected            #정상동작 확인
     ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
     Should Contain    ${clean_output}    "Status":"ServiceOn"
+    Should Contain    ${clean_output}    441CA25X000019
     Set Test Message   QEMS status=${clean_output}
 
     Close all connections
-
-    Check LTE Cell Status In CLI
-
 
 # LTE Sync Source NTP status
 #     Open Connection And Log In LTE
