@@ -323,8 +323,10 @@ LTE Sync Source EXT_PPS status
 
 
 #########################################################################################
-
-
+Open Connection And Log In NR
+    Close all connections
+    
+    
 Check NR Cell Active In CLI
     Open Connection And Log In NR
     [Documentation]    Checking NR Cell Normal Running
