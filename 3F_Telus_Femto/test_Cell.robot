@@ -156,7 +156,7 @@ Check LTE Cell Status In CLI
 LTE Check ToD Sync         #정상동작 확인
     [Documentation]    ToD Synchronized 정상 동작 확인
     ...
-    ...                idm oam -x ls Device.Time 입력 후, 하기 내용 확인
+    ...                idm oam -x ls Device.Time 입력 결과 & LTE Cell의 ToD - System ToD 결과 확인
     ...    
     ...                [Status = Synchronized]
     [Tags]    LTE PnP
@@ -186,6 +186,7 @@ LTE Check IPSEC Tunnel complete        #정상동작 확인
     [Documentation]    IPSec Connected 확인
     ...
     ...                idm oam -x status 입력 후, 하기 내용 확인
+    ...    
     ...                [Virtual IP: up] 
     [Tags]    LTE PnP
     ...       LTE Sanity
@@ -241,6 +242,7 @@ LTE Sync Source EXT_PPS status
     [Documentation]    synchronization (EXTPPS) 동작 확인 (LTE Cell Sync)
     ...                
     ...                idm oam -x syncmgrstate 입력 후, 하기 내용 확인
+    ...    
     ...                [Active Sync Source : EXTPPS], [Sync Manager State : DISP]
     [Tags]  LTE Sanity
     ...     LTE PnP
@@ -335,6 +337,7 @@ Check NR Cell Active In CLI
     [Documentation]    Checking NR Cell Normal Running
     ...
     ...                NR Cell ssh 접속, nrctl 입력 후 하기 내용 확인
+    ...    
     ...                [cellState: Active], [operationalState: Enabled]
     [Tags]   NR Sanity
     ...      NR status
@@ -348,6 +351,7 @@ Check NR Cell Active In CLI
 
 NR Cell ToD Sync complete
     [Documentation]    Checking NR Cell Tod Sync
+    ...
     ...                NR Cell ssh 접속 후, nrctl로 [NTP Status: SYNCHRONIZED] 확인
     [Tags]    NR Sanity
     ...       NR PnP
@@ -361,6 +365,7 @@ NR Cell ToD Sync complete
 
 NR Check IPSEC Tunnel complete
     [Documentation]    NR IPSec Connected 확인
+    ...
     ...                NR Cell ssh 접속 후, swanctl -l 로 [ESTABLISHED], [INSTALLED], [TUNNEL] 확인
     [Tags]    NR Sanity
     ...       NR PnP
@@ -378,6 +383,7 @@ NR Check IPSEC Tunnel complete
 
 NR Cell Sync Source complete
     [Documentation]    Checking NR Cell Sync Locked
+    ...
     ...                NR Cell ssh 접속 후, sysrepocfg -X -mo-ran-sync -doperational 로 [Sync Status : LOCKED] 확인
     [Tags]    NR Sanity
     ...       NR PnP 
