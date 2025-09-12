@@ -212,31 +212,26 @@ LTE Check QEMS Connected            #정상동작 확인
         
     Open Connection Jenkins Server
 
-    Set Client Configuration    timeout=60 seconds
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
-
-    ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus -H 'accept: application/json' -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ==' -H 'Content-Type: application/json; charset=utf-8' -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
-                                                 
+    # 1) ‘그대로’ 한 문자열로 만든다 (명령 내용 절대 변경 없음)
+    ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://10.253.3.83:11000/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["441CA25X000019"]}'
     Log To Console    \n===CMD===\n${cmd}\n===END===
 
-    Write    ${cmd}
+    # 2) 대화형 Write 대신, 단발 실행으로 stdout/stderr/rc 모두 받기
+    ${out}    ${err}    ${rc}=    Execute Command    ${cmd}    return_stdout=True    return_stderr=True    return_rc=True    timeout=60s
+    Log To Console    \n===RC===\n${rc}\n===END===
+    Log To Console    \n===STDOUT===\n${out}\n===END===
+    Log To Console    \n===STDERR===\n${err}\n===END===
 
-    # 핵심: 프롬프트가 돌아올 때까지 전부 읽기 (본문이 늦게 와도 OK)
-    ${all}=    Read Until Prompt    strip_prompt=True
-    Log To Console    \n===ALL===\n${all}\n===END===
+    # 3) -v의 디버그는 주로 STDERR로 나오므로 합쳐서 본문 추출
+    ${merged}=    Catenate    SEPARATOR=\n    ${out}    ${err}
+    # 디버그/헤더(*,<,>) 줄 제거 → 본문만
+    ${body}=    Replace String Using Regexp    ${merged}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
+    Log To Console    \n===BODY===\n${body}\n===END===
 
-    # JSON만 뽑기: 마지막 {...} (여러 개여도 마지막이 본문인 경우가 많음)
-    ${matches}=    Get Regexp Matches    ${all}    (?s)\\{.*?\\}
-    ${n}=          Get Length    ${matches}
-    Run Keyword If    ${n} > 0    ${json}=    Get From List    ${matches}    ${n - 1}
-    Run Keyword If    ${n} > 0    Log To Console    \n===JSON(last)===\n${json}\n===END===
+    # 4) 검증
+    Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
+    Set Test Message       QEMS status=${body}
 
-    # 검증은 전체/또는 json 어느 쪽이든
-    Should Match Regexp    ${all}    "Status"\\s*:\\s*"ServiceOn"
-    # 또는: Run Keyword If    ${n} > 0    Should Match Regexp    ${json}    "Status"\\s*:\\s*"ServiceOn"
-
-    Set Test Message    QEMS status=${json}
-    
     Close All Connections
 
 
