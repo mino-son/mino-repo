@@ -361,6 +361,7 @@ Debug Chat GPT
     Close all connections
 
 Debug 222
+    Open Connection And Log In NR
 # 0) 디버그 스냅샷: 현재 화면/PS1/TERM 확인 (프롬프트 필요 없음)
     Set Log Level    TRACE
     Write    ${EMPTY}
