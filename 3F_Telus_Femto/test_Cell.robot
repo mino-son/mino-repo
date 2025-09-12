@@ -72,6 +72,9 @@ Open Connection And Log In NR
     
     Set Client Configuration    prompt=#${SPACE}
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
+    ${TESTASD}     Read Until Prompt
+    Log    ${TESTASD}
+    Log To Console    ${TESTASD}
     Read Until Prompt             strip_prompt=True
 
     # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
@@ -333,10 +336,11 @@ Check NR Cell Active In CLI
     [Tags]   NR status    
     Open Connection And Log In NR
 
-    Sync Shell Prompt
-
     ${output_status}=    Run    nrctl
     
+    Log To Console    ${output_status}
+    Log    ${output_status}
+
     Should Contain    ${output_status}    cellState: Active
     Should Contain    ${output_status}    operationalState: Enabled
     Set Test Message    =${output_status}
