@@ -323,17 +323,14 @@ LTE Sync Source EXT_PPS status
 
 
 #########################################################################################
-Open Connection And Log In NR
-    Close all connections
-    
-    
+
 Check NR Cell Active In CLI
     Open Connection And Log In NR
     [Documentation]    Checking NR Cell Normal Running
     [Tags]   NR status
+
     Write    nrctl
-    ${output_status}=    Read Until Prompt  strip_prompt=True
-    log     ${output_status}
+    ${output_status}=    Read Until Prompt  strip_prompt=True    
     Should Contain    ${output_status}    cellState: Active
     Should Contain    ${output_status}    operationalState: Enabled
     Set Test Message   Cell status=${output_status}
