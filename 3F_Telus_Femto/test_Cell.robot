@@ -62,9 +62,16 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp    (?i)password:
     Write    ${nr_root_pass}
-    Set Client Configuration    prompt=REGEXP:root@localhost:[^\\n]*#\\s*$
-
+    
+    Write    export TERM=dumb; unset PROMPT_COMMAND; PS1="NR# "
+    Read Until Regexp    (?m)^NR#\\s*$
+    Set Client Configuration    prompt=NR# 
+    Set Client Configuration    timeout=15 seconds
     Read Until Prompt    strip_prompt=True
+
+
+    #Set Client Configuration    prompt=REGEXP:root@localhost:[^\\n]*#\\s*$
+    #Read Until Prompt    strip_prompt=True
 
 Open Connection SSH Druid Core
     SSHLibrary.Open Connection    ${DruidCore_ssh_connection_ip}
