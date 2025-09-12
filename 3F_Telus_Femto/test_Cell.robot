@@ -54,7 +54,6 @@ Open Connection And Log In LTE
     Write    ${lte_root_pass}
     Set Client Configuration    prompt=#    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Set Client Configuration    timeout=2 seconds
     Read Until Prompt             strip_prompt=True
 
 Open Connection And Log In NR
@@ -66,7 +65,6 @@ Open Connection And Log In NR
     
     Set Client Configuration    prompt=REGEXP:[#] ?$    
     # ✅ 방어적 플러시: 이전 잔여 출력(배너 등) 확실히 제거
-    Set Client Configuration    timeout=2 seconds
     Read Until Prompt             strip_prompt=True    
 
 Open Connection SSH Druid Core
