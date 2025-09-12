@@ -214,6 +214,38 @@ LTE Check QEMS Connected            #정상동작 확인
     #Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
     ${cmd}=    Catenate    SEPARATOR=    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
     Write    ${cmd}
+    ###########디버깅
+# 커맨드 실행
+    Write    ${cmd}
+
+# 1) 원본 캡처 (프롬프트까지)
+    Set Client Configuration    timeout=25 seconds
+    ${raw}=    Read Until Prompt    strip_prompt=True
+
+# 2) 콘솔/파일로 상세 로깅
+    Log To Console    \n===CMD===\n${cmd}\n===END===
+    ${raw_len}=    Get Length    ${raw}
+    Log To Console    \n===RAW(len=${raw_len})===\n${raw}\n===END===
+
+    Create File    ${OUTPUT DIR}/qems_raw.txt    ${raw}
+
+# 3) curl -v 디버그 라인만 따로 보기(*, <, > 로 시작)
+    ${dbg}=    Get Lines Matching Regexp    ${raw}    (?m)^[*<>].*$
+    Log To Console    \n===CURL_DEBUG===\n${dbg}\n===END===
+    Create File    ${OUTPUT DIR}/qems_debug.txt    ${dbg}
+
+# 4) ANSI 제거(있다면)
+    ${noansi}=    Replace String Using Regexp    ${raw}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
+    Create File    ${OUTPUT DIR}/qems_noansi.txt    ${noansi}
+
+# 5) 본문(body)만 추출: -v 디버그 라인 제거
+    ${body}=    Replace String Using Regexp    ${noansi}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
+    Log To Console    \n===BODY===\n${body}\n===END===
+    Create File    ${OUTPUT DIR}/qems_body.txt    ${body}
+
+# 6) 이후 네가 하던 체크는 body 기준으로
+    Should Contain    ${body}    "Status":"ServiceOn"
+    ###########
     ${qems_status}=    Read Until Prompt    strip_prompt=True
     ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
     Should Contain    ${clean_output}    "Status":"ServiceOn"
