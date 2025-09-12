@@ -218,33 +218,18 @@ LTE Check QEMS Connected            #정상동작 확인
 # 1) 정확한 명령 문자열 (공백 1칸 보장)
     ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
 
-    Log To Console    \n===CMD===\n${cmd}\n===END===
-
-# 2) 실행 & 원본 캡처
+    # 커맨드 실행
     Write    ${cmd}
 
-    # 1) curl 실행
-    Write    ${cmd}
+    # curl 끝 신호까지 읽기 (둘 다 대응: keep-alive 유지 or 바로 닫힘)
+    ${raw}=    Read Until Regexp    (?m)^\* (Connection #\d+ to host .+ left intact|Closing connection \d+)\r?$
 
-# 2) 원본 캡처 (프롬프트까지)
-    ${raw}=    Read Until Prompt    strip_prompt=True
-    Log To Console    \n===RAW===\n${raw}\n===END===
+    # 프롬프트까지 한 번 더 플러시
+    Read Until Prompt    strip_prompt=True
 
-# 3) 직후 리턴코드 확인(명령 변경 아님, 별도 줄)
-    Write    echo __RC=$?
-    ${rc_line}=    Read Until Prompt    strip_prompt=True
-    Log To Console    \n===RC===\n${rc_line}\n===END===
-
-# 4) JSON이 원본 어딘가에 있는지 바로 확인(임시)
-    Should Contain    ${raw}    "Status":"ServiceOn"
-    ${raw}=    Read Until Prompt    strip_prompt=True
-
-# 3) -v 디버그 라인 제거 → 본문만
-    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    Log To Console    \n===BODY===\n${body}\n===END===
-
-# 4) 검증
-    Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
+    # 본문만 남기고 검증
+    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\r?\n?    ${EMPTY}
+    Should Match Regexp    ${body}    "Status"\s*:\s*"ServiceOn"
 
 
 
