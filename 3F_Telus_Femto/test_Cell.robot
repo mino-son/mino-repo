@@ -68,7 +68,8 @@ Open Connection And Log In NR
     Write    su -
     Read Until Regexp             (?i)password:
     Write    ${nr_root_pass}
-
+    Set Client Configuration      encoding=UTF-8    newline=\n
+    
     # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
     Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
     Write    export TERM=dumb; unset PROMPT_COMMAND
@@ -318,6 +319,8 @@ LTE Sync Source EXT_PPS status
 
 
 #########################################################################################
+
+
 
 
 Check NR Cell Active In CLI
