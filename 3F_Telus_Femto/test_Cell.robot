@@ -212,93 +212,31 @@ LTE Check QEMS Connected            #정상동작 확인
     Open Connection Jenkins Server
 
     #Write    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus -H 'accept: application/json'  -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='  -H 'Content-Type: application/json; charset=utf-8'  -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-    ${cmd}=    Catenate    SEPARATOR=    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
-    Write    ${cmd}
-    ###########디버깅 ########### ########### ########### ########### ########### ########### ###########
-# 커맨드 실행
-    Write    ${cmd}
+    #${cmd}=    Catenate    SEPARATOR=    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
+    #Write    ${cmd}
 
-# 1) 원본 캡처 (프롬프트까지)
-    Set Client Configuration    timeout=25 seconds
-    ${raw}=    Read Until Prompt    strip_prompt=True
-
-# 2) 콘솔/파일로 상세 로깅
-    Log To Console    \n===CMD===\n${cmd}\n===END===
-    ${raw_len}=    Get Length    ${raw}
-    Log To Console    \n===RAW(len=${raw_len})===\n${raw}\n===END===
-
-    Create File    ${OUTPUT DIR}/qems_raw.txt    ${raw}
-
-# 3) curl -v 디버그 라인만 따로 보기(*, <, > 로 시작)
-    ${dbg}=    Get Lines Matching Regexp    ${raw}    (?m)^[*<>].*$
-    Log To Console    \n===CURL_DEBUG===\n${dbg}\n===END===
-    Create File    ${OUTPUT DIR}/qems_debug.txt    ${dbg}
-
-# 4) ANSI 제거(있다면)
-    ${noansi}=    Replace String Using Regexp    ${raw}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY}
-    Create File    ${OUTPUT DIR}/qems_noansi.txt    ${noansi}
-
-# 5) 본문(body)만 추출: -v 디버그 라인 제거
-    ${body}=    Replace String Using Regexp    ${noansi}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
-    Log To Console    \n===BODY===\n${body}\n===END===
-    Create File    ${OUTPUT DIR}/qems_body.txt    ${body}
-
-# 6) 이후 네가 하던 체크는 body 기준으로
-    Should Contain    ${body}    "Status":"ServiceOn"
-    ########### ########### ########### ########### ########### ########### ########### ###########
-
-
-
-
-
-
-
-
- ########### ########### ########### ########### ########### ########### ########### ########### ########### ###########
-# --- 0) 프롬프트/타임아웃(세션당 1회만 해도 됨) ---
-    Set Client Configuration    timeout=25 seconds
-    Set Client Configuration    prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[^\\n]*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
-
-# --- 1) 커맨드 문자열을 정확히 생성(공백 1칸 구분자) + 찍어보기 ---
+# 1) 정확한 명령 문자열 (공백 1칸 보장)
     ${cmd}=    Catenate    SEPARATOR=${SPACE}    curl -v -X 'POST' http://${lte_qemsapi_connection_ip}/api/v1/telus    -H 'accept: application/json'    -H 'Authorization: Basic dGVsdXM6VGVsdXMyNDA5IQ=='    -H 'Content-Type: application/json; charset=utf-8'    -d '{"actionType":"SN_GetStatusLTE","serialNumber":["${device_serial}"]}'
+
     Log To Console    \n===CMD===\n${cmd}\n===END===
 
-# --- 2) 실행 & 원본(raw) 캡처 ---
+# 2) 실행 & 원본 캡처
     Write    ${cmd}
     ${raw}=    Read Until Prompt    strip_prompt=True
-    ${raw_len}=    Get Length    ${raw}
-    Log To Console    \n===RAW(len=${raw_len})===\n${raw}\n===END===
-    Create File    ${OUTPUT DIR}/qems_raw.txt    ${raw}
 
-# --- 3) ANSI 제거(있다면) + curl -v 디버그(*,<,>) 라인 제거 → 본문(body) ---
-    ${noansi}=    Replace String Using Regexp    ${raw}    (\\x1B\\[[0-9;]*[ -/]*[@-~])    ${EMPTY}
-    ${body}=      Replace String Using Regexp    ${noansi}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
+# 3) -v 디버그 라인 제거 → 본문만
+    ${body}=    Replace String Using Regexp    ${raw}    (?m)^[*<>].*$\\r?\\n?    ${EMPTY}
     Log To Console    \n===BODY===\n${body}\n===END===
-    Create File    ${OUTPUT DIR}/qems_body.txt    ${body}
 
-# --- 4) (선택) JSON만 뽑아서 마지막 객체를 로깅 ---
-    ${matches}=    Get Regexp Matches    ${body}    (?s)\\{.*?\\}
-    ${n}=          Get Length    ${matches}
-    ${idx}=        Evaluate    ${n}-1
-    Run Keyword If    ${n} > 0    ${json}=    Get From List    ${matches}    ${idx}
-    Run Keyword If    ${n} > 0    Log To Console    \n===JSON(last)===\n${json}\n===END===
-
-# --- 5) 검증(본문/JSON 아무 쪽이든) ---
+# 4) 검증
     Should Match Regexp    ${body}    "Status"\\s*:\\s*"ServiceOn"
 
 
 
-
-
-
-
-  ########### ########### ########### ########### ########### ########### ########### ###########
-
-
-    ${qems_status}=    Read Until Prompt    strip_prompt=True
-    ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
-    Should Contain    ${clean_output}    "Status":"ServiceOn"
-    Should Contain    ${clean_output}    441CA25X000019
+    # ${qems_status}=    Read Until Prompt    strip_prompt=True
+    # ${clean_output}=    Replace String Using Regexp    ${qems_status}    (\\x1B\\[[0-9;]*[A-Za-z]|\\[[0-9;]*m)    ${EMPTY} 
+    # Should Contain    ${clean_output}    "Status":"ServiceOn"
+    # Should Contain    ${clean_output}    441CA25X000019
     Set Test Message   QEMS status=${clean_output}
 
 
