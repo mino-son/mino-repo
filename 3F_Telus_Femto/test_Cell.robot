@@ -72,6 +72,7 @@ Open Connection And Log In NR
     # 프롬프트 동기화: ANSI 허용 + #/$ 모두 허용
     Set Client Configuration      prompt=REGEXP:(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*[#$] ?(?:\\x1B\\[[0-9;]*[ -/]*[@-~])*\\s*$
     Write    export TERM=dumb; unset PROMPT_COMMAND
+    Write    ${EMPTY}
     Read Until Prompt             strip_prompt=True
 
 
@@ -133,17 +134,6 @@ Check LTE Cell Status In CLI
     Should Contain    ${output_status}    RFTxStatus: 1
     Should Contain    ${output_status}    Number of Active MMEs: 1
     Close all connections
-
-Check NR Cell Status In CLI
-    Open Connection And Log In NR
-
-    Write    nrctl
-    ${output_status}=    Read Until Prompt  strip_prompt=True
-    log     ${output_status}
-    Should Contain    ${output_status}    cellState: Active
-    Close all connections
-
-
 
 *** Test Cases ***    ##################################################
 
